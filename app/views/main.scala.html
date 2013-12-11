@@ -1,0 +1,25 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
+    </head>
+    <body>
+
+        <header class="topbar">
+            <h1 class="fill">
+                <a>
+                    Play tutorial - Cadec 2014 &mdash; Weather application
+                </a>
+            </h1>
+        </header>
+
+        <section id="main">
+        @content
+        </section>
+
+    </body>
+</html>
