@@ -1,6 +1,12 @@
-@(weather: Weather)
+@(weather: Seq[Seq[Weather]])
 
-@main("Temperature") {
-    <h1>The temp is</h1>
-    <strong>@weather</strong>
+@main("Prognos") {
+    <h3>Temperaturen är</h3>
+    @for(l <- weather) {
+        <ul>
+        @for(w <- l) {
+            <li>@w.temp grader klockan @w.time</li>
+        }
+        </ul>
+    }
 }

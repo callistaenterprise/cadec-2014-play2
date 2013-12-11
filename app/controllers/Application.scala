@@ -43,7 +43,7 @@ object Application extends Controller {
 
   def getWeather(location: Location): Future[Response] = {
     val url = WS.url(Play.current.configuration.getString("smhi.url").get.format(location.lat.toString.substring(0,5), location.lng.toString.substring(0,5)))
-    println(url)
+//    println(url)
     url get
   }
 
@@ -65,7 +65,7 @@ object Application extends Controller {
             forecasts <- Future.sequence(futureLocations)
             futureTemperatures = forecasts.map(f => loadTempFromForecasts(f.json))
             temperatures <- Future.sequence(futureTemperatures.map(x => x))
-          } yield Ok(html.temp(temperatures(0)(0)))
+          } yield Ok(html.temp(temperatures))
         })
   }
 
