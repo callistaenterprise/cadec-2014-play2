@@ -1,12 +1,11 @@
-@(weather: Seq[Seq[Weather]])
+@(weather: Seq[Weather])
+@import scala.concurrent.Future
 
 @main("Prognos") {
     <h3>Temperaturen är</h3>
-    @for(l <- weather) {
         <ul>
-        @for(w <- l) {
+        @for(w <- weather) {
             <li>@w.temp grader klockan @w.time</li>
         }
         </ul>
-    }
 }
