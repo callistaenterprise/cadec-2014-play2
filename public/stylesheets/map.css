@@ -1,0 +1,11 @@
+#map_wrapper {
+    position: absolute;
+    top: 100px; /* Header Height */
+    bottom: 0px; /* Footer Height */
+    width: 100%;
+}
+
+#map_canvas {
+    width: 100%;
+    height: 100%;
+}

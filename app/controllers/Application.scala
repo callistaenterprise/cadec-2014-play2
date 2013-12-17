@@ -36,7 +36,7 @@ object Application extends Controller {
 
   implicit val weatherReads: Reads[Weather] = (
       (__ \\ "validTime").read[String].map(DateTime.parse(_, dateTimeNoMillis)) and
-      (__ \\ "t").read[Double]
+      (__ \\ "t").read[Double].map(_.toString)
     )(Weather)
 
 
@@ -68,7 +68,7 @@ object Application extends Controller {
             futureForecasts = locations.map(location => getWeather(location))
             forecasts <- Future.sequence(futureForecasts)
             temperatures = forecasts map (x => loadCurrentTempFromForecasts(x.json))
-          } yield Ok(html.temp(temperatures))
+          } yield Ok(html.temp(locations zip temperatures))
         })
   }
 

@@ -1,11 +1,72 @@
-@(weather: Seq[Weather])
-@import scala.concurrent.Future
+@(weather: Seq[(Location, Weather)])
 
 @main("Prognos") {
-    <h3>Temperaturen är</h3>
-        <ul>
-        @for(w <- weather) {
-            <li>@w.temp grader klockan @w.time</li>
-        }
-        </ul>
+
+    <div id="map_wrapper">
+        <div id="map_canvas" class="mapping"></div>
+    </div>
+
+
+    <script>
+
+    jQuery(function($) {
+    // Asynchronously Load the map API
+    var script = document.createElement('script');
+    script.src = "http://maps.googleapis.com/maps/api/js?sensor=false&callback=initialize";
+    document.body.appendChild(script);
+    });
+
+    function initialize() {
+    var map;
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+    mapTypeId: 'roadmap'
+    };
+
+    // Display a map on the page
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+
+    // Info Window Content
+    var temp = new Array(@weather.map(_._2.temp).mkString(","));
+
+    console.log(temp)
+    // Display multiple markers on a map
+    var infoWindow = new google.maps.InfoWindow(), marker;
+
+    // Loop through our array of markers & place each one on the map
+    @for(w <- weather) {
+        var position = new google.maps.LatLng(@w._1.lat, @w._1.lng)
+        bounds.extend(position);
+        marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: "\"<h3>" + @w._2.temp + "</h3>\""
+        });
+
+        // Allow each marker to have an info window
+        google.maps.event.addListener(marker, 'mouseover', (function(marker) {
+            return function() {
+                infoWindow.setContent("<h3>" + @w._2.temp + " grader</h3>");
+                infoWindow.open(map, marker);
+            }
+        })(marker));
+
+        google.maps.event.addListener(marker, 'mouseout', (function() {
+            return function() {
+                infoWindow.close();
+            }
+        })(marker));
+
+        map.fitBounds(bounds);
+    }
+
+    // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+        this.setZoom(5);
+        google.maps.event.removeListener(boundsListener);
+    });
+
+    }
+    </script>
 }
