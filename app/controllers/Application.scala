@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.{Response, WS}
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import play.api.data.Forms._
@@ -22,53 +22,57 @@ object Application extends Controller {
   /**
    * Describe the computer form (used in both edit and create screens).
    */
-  val addressForm = Form (
+  val addressForm = Form(
     mapping(
       "name" -> nonEmptyText
     )(Address.apply)(Address.unapply)
   )
 
+  val getConfig = (key: String) => config.getString(key).get
+
   implicit val locationReads: Reads[Location] = (
-      (__ \ "geometry" \ "location" \ "lng").read[Double] and
-      (__ \ "geometry" \ "location" \ "lat").read[Double] and
-      (__ \ "formatted_address").read[String]
+    (JsPath \ "geometry" \ "location" \ "lng").read[Double] and
+      (JsPath \ "geometry" \ "location" \ "lat").read[Double] and
+      (JsPath \ "formatted_address").read[String]
     )(Location)
 
   implicit val weatherReads: Reads[Weather] = (
-      (__ \\ "validTime").read[String].map(DateTime.parse(_, dateTimeNoMillis)) and
-      (__ \\ "t").read[Double].map(_.toString)
+    (JsPath \\ "validTime").read[String].map(DateTime.parse(_, dateTimeNoMillis)) and
+      (JsPath \\ "t").read[Double].map(_.toString)
     )(Weather)
 
 
-  def getGeoCodes(address: String): Future[Response] = {
-    WS.url(config.getString("maps.api").get)
-      .withQueryString("address" -> address, "sensor" -> "false")
+  def getLocations(address: String): Future[Seq[Location]] = {
+    val response = WS.url(getConfig("maps.api")).withQueryString("address" -> address, "sensor" -> "false")
       .get
+    response map (r => (r.json \ "results").as[Seq[Location]])
   }
 
-  def getWeather(location: Location): Future[Response] = {
-    WS.url(config.getString("smhi.url").get.format(location.lat.toString.substring(0,5), location.lng.toString.substring(0,5)))
-    .get
+  def getWeather(locations: Seq[Location]): Future[Seq[LocalWeather]] = {
+    Future.sequence(
+      locations.map {
+        location =>
+          val response = WS.url(getConfig("smhi.url").format(location.lat.toString.substring(0, 5), location.lng.toString.substring(0, 5))).get
+          response map (r => loadCurrentTempFromForecasts(r.json, location))
+      }
+    )
   }
 
-  def loadLocationsFromGeoCodes(json: JsValue): Seq[(Location)] = {
-    (json \ "results").as[Seq[Location]]
+  private def loadCurrentTempFromForecasts(json: JsValue, l: Location): LocalWeather = {
+    val w =(json \ "timeseries").as[Seq[Weather]].filter(t => t.time.isAfterNow())(0)
+    l.withWeather(w)
   }
 
-  def loadCurrentTempFromForecasts(json: JsValue):Weather = {
-    (json \ "timeseries").as[Seq[Weather]].filter(t => t.time.isAfterNow())(0)
-  }
 
-  def weather() = Action.async { implicit request =>
-      addressForm.bindFromRequest.fold(formWithErrors => Future{BadRequest(html.index(formWithErrors))},
+  def weather() = Action.async {
+    implicit request =>
+      addressForm.bindFromRequest.fold(formWithErrors => Future {
+        BadRequest(html.index(formWithErrors))
+      },
         address => {
-          for {
-            geoCodes <- getGeoCodes(address.name)
-            locations = loadLocationsFromGeoCodes(geoCodes.json)
-            futureForecasts = locations.map(location => getWeather(location))
-            forecasts <- Future.sequence(futureForecasts)
-            temperatures = forecasts map (x => loadCurrentTempFromForecasts(x.json))
-          } yield Ok(html.temp(locations zip temperatures))
+          getLocations(address.name) flatMap {
+            getWeather(_)
+          } map (s => Ok(html.temp(s)))
         })
   }
 
@@ -76,7 +80,9 @@ object Application extends Controller {
    * Handle default path requests, redirect to computers list
    */
   def index = Action.async {
-    Future{Ok(html.index(addressForm))}
+    Future {
+      Ok(html.index(addressForm))
+    }
   }
 
 }

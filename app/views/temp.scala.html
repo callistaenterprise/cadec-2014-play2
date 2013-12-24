@@ -1,4 +1,4 @@
-@(weather: Seq[(Location, Weather)])
+@(locations: Seq[LocalWeather])
 
 @main("Prognos") {
 
@@ -28,26 +28,26 @@
 
 
     // Info Window Content
-    var temp = new Array(@weather.map(_._2.temp).mkString(","));
+    var temp = new Array(@locations.map(_.weather.temp).mkString(","));
 
     console.log(temp)
     // Display multiple markers on a map
     var infoWindow = new google.maps.InfoWindow(), marker;
 
     // Loop through our array of markers & place each one on the map
-    @for(w <- weather) {
-        var position = new google.maps.LatLng(@w._1.lat, @w._1.lng)
+    @for(l <- locations) {
+        var position = new google.maps.LatLng(@l.location.lat, @l.location.lng)
         bounds.extend(position);
         marker = new google.maps.Marker({
             position: position,
             map: map,
-            title: "\"<h3>" + @w._2.temp + "</h3>\""
+            title: "\"<h3>" + @l.weather.temp + "</h3>\""
         });
 
         // Allow each marker to have an info window
         google.maps.event.addListener(marker, 'mouseover', (function(marker) {
             return function() {
-                infoWindow.setContent("<h3>" + @w._2.temp + " grader</h3>");
+                infoWindow.setContent("<h3>" + @l.weather.temp + " grader</h3>");
                 infoWindow.open(map, marker);
             }
         })(marker));
