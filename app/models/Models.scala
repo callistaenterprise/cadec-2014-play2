@@ -2,7 +2,7 @@ package models
 
 import org.joda.time.DateTime
 
-case class Address(name: String)
+case class Address(address: String)
 
 case class Location(lng: String, lat: String, address: String) {
   def withWeather(weatherService: String, weather: Weather) = LocalWeather(lng, lat, Map(weatherService -> weather.temp))

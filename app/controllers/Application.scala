@@ -25,7 +25,7 @@ object Application extends Controller {
    */
   val addressForm = Form(
     mapping(
-      "name" -> nonEmptyText
+      "address" -> nonEmptyText
     )(Address.apply)(Address.unapply)
   )
 
@@ -50,18 +50,15 @@ object Application extends Controller {
 
 
   def getLocations(address: String): Future[Seq[Location]] = {
-    val response = WS.url(getConfig("maps.api")).withQueryString("address" -> address, "sensor" -> "false")
-      .get
-      .filter (_.status == OK)
-
-    response map (r => (r.json \ "results").as[Seq[Location]])
+    val response = WS.url(getConfig("maps.api")).withQueryString("address" -> address, "sensor" -> "false").get.filter (_.status == OK)
+    response map (r =>(r.json \ "results").as[Seq[Location]])
   }
 
   def getWeatherFromSmhi(locations: Seq[Location]): Future[Seq[LocalWeather]] = {
     Future.sequence(
       locations.map {
         location =>
-          val response = WS.url(getConfig("smhi.url").format(location.lat, location.lng)).get
+          val response = WS.url(getConfig("smhi.url").format(location.lat, location.lng)).get.filter(_.status == OK)
           response map (r => loadCurrentTempFromForecasts(r.json, location))
       }
     )
@@ -73,25 +70,25 @@ object Application extends Controller {
   }
 
 
-  def weather() = Action.async {
+  def weatherPost() = Action.async(parse.json) {
     implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
-        BadRequest(html.index(formWithErrors))
+        BadRequest("Unable to parse form")
       },
-        address => {
-          getLocations(address.name) flatMap {
-            getWeatherFromSmhi(_)
-          } map (s => Ok(toJson(s)))
-        })
+      address => {
+        getWeatherAsJson(address.address)
+      })
   }
 
-  /**
-   * Handle default path requests, redirect to computers list
-   */
-  def index = Action.async {
-    Future {
-      Ok(html.index(addressForm))
-    }
+  def weatherGet(address: String) = Action.async {
+    getWeatherAsJson(address)
+  }
+
+  def getWeatherAsJson(address: String) = {
+    println("address: " + address)
+    getLocations(address) flatMap {
+      getWeatherFromSmhi(_)
+    } map (s => Ok(toJson(s)))
   }
 
 }
