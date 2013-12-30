@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.{WS}
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Future}
 import play.api.libs.json._
 import play.api.libs.json.Json._
 import play.api.libs.functional.syntax._
@@ -13,7 +13,6 @@ import models._
 import play.api.data._
 import org.joda.time.DateTime
 import org.joda.time.format.ISODateTimeFormat._
-import scala.concurrent.duration._
 
 
 object Application extends Controller {
@@ -61,15 +60,18 @@ object Application extends Controller {
 
 
   def getLocations(address: String): Future[Seq[Location]] = {
-    val response = WS.url(getConfig("maps.api")).withQueryString("address" -> address, "sensor" -> "false").get.filter (_.status == OK)
-    response map (r =>(r.json \ "results").as[Seq[Location]])
+    WS.url(getConfig("maps.api")).withQueryString("address" -> address, "sensor" -> "false").get map (r =>(r.json \ "results").as[Seq[Location]])
   }
 
   def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
     Future.sequence(
     locations.map {
         location => {
-          WS.url(getConfig("smhi.url").format(location.lat, location.lng)).get.filter(_.status == OK) map (r => loadCurrentTempFromSmhiForecast(r.json)) map(weather => location.withWeather("smhi", weather))
+          val smhi = WS.url(getConfig("smhi.url").format(location.lat, location.lng)).get map (r => loadCurrentTempFromSmhiForecast(r.json)) map(weather => location.withWeather("smhi", weather))
+          val yr = WS.url(getConfig("yr.url").format(location.lat, location.lng)).get map (r => loadCurrentTempFromSmhiForecast(r.json)) map(weather => location.withWeather("yr", weather))
+//          smhi.recoverWith {case _ => yr}
+//          Future.firstCompletedOf(List(smhi, yr))
+          Future.sequence(List(smhi, yr)).map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _))
         }
       }
      )
@@ -100,9 +102,4 @@ object Application extends Controller {
     } map (s => Ok(toJson(s)))
   }
 
-  def index = Action.async {
-    Future {
-      Ok(html.main())
-    }
-  }
 }
