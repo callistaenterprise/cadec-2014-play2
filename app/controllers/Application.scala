@@ -102,4 +102,9 @@ object Application extends Controller {
     } map (s => Ok(toJson(s)))
   }
 
+  def index = Action.async {
+    Future {
+      Ok(html.main())
+    }
+  }
 }

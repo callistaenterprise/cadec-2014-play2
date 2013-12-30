@@ -3,6 +3,7 @@
 # ~~~~
 
 # Home page
+GET     /                           controllers.Application.index
 GET     /weather/:address           controllers.Application.weatherGet(address: String)
 POST    /weather                    controllers.Application.weatherPost
 
