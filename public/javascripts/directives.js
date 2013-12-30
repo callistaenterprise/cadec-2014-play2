@@ -4,6 +4,8 @@ app.directive('map', function () {
 
       function initialize() {
         var mapOptions = {
+          center: new google.maps.LatLng(57.71,11.94),
+          zoom: 2,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           streetViewControl: false,
           zoomControl: true,
@@ -18,6 +20,7 @@ app.directive('map', function () {
         };
         var bounds = new google.maps.LatLngBounds();
         var map = new google.maps.Map(elem[0], mapOptions);
+        console.log(map);
 
         angular.forEach(scope.positions, function(p){
           var position = new google.maps.LatLng(p.location.lat, p.location.lng)
@@ -51,18 +54,16 @@ app.directive('map', function () {
 
         });
 
-          var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-              console.log(this.getZoom());
+        var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
 
-              if(this.getZoom() > 20){
-                this.setZoom(this.getZoom()-5);
-              }
+          if(this.getZoom() > 20){
+            this.setZoom(this.getZoom()-5);
+          }
 
-              google.maps.event.removeListener(boundsListener);
-          });
+          google.maps.event.removeListener(boundsListener);
+        });
 
         scope.$on('update', function() {
-          console.log('changed');
           initialize();
         })
 
