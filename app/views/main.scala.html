@@ -1,27 +1,33 @@
-@(title: String)(content: Html)
-
 <!DOCTYPE html>
 
-<html>
-    <head>
-        <title>@title</title>
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/map.css")">
-        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.css")">
-        <script src="@routes.Assets.at("javascripts/jquery-2.0.3.min.js")"></script>
-    </head>
-    <body>
 
-        <header class="topbar">
-            <h1 class="fill">
-                <a>
-                    Play tutorial - Cadec 2014 &mdash; Weather application
-                </a>
-            </h1>
-        </header>
+<!doctype html>
+<html lang="en" ng-app="playApp">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-        <section id="main">
-        @content
-        </section>
+    <title></title>
 
-    </body>
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/map.css")">
+
+    <script src="@routes.Assets.at("javascripts/angular.min.js")"></script>
+    <script src="@routes.Assets.at("javascripts/controllers.js")"></script>
+    <script src="@routes.Assets.at("javascripts/directives.js")"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARAKuvbDq5--OFb1P90GDIlOjNvw_xdrI&sensor=false"></script>
+</head>
+<body ng-controller="MainCtrl">
+
+<div id="input">
+    <form>
+        <input type="text" ng-model="address" class="searchbox"/>
+        <button ng-click="getWeather(address)" class="searchbutton" ng-class="{searchbuttonloading: loading}"/></button>
+    </form>
+</div>
+
+<div map class="map-canvas">
+
+</div>
+
+</body>
 </html>
