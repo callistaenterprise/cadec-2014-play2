@@ -5,10 +5,9 @@ import org.joda.time.DateTime
 case class Address(address: String)
 
 case class Location(lng: String, lat: String, address: String) {
-  def withWeather(weatherService: String, weather: Weather) = LocalWeather(lng, lat, Map(weatherService -> weather.temp))
+  def withWeather(provider: String, weather: Weather) = LocationWithWeather(this, Map(provider -> weather))
 }
 
-case class LocalWeather(lng: String, lat: String, temp:Map[String, String])
+case class LocationWithWeather(location: Location, temperatures:Map[String, Weather])
 
 case class Weather(time: DateTime, temp: String)
-
