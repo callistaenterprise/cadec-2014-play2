@@ -20,17 +20,23 @@ app.directive('map', function () {
         var map = new google.maps.Map(elem[0], mapOptions);
 
         angular.forEach(scope.positions, function(p){
-          var position = new google.maps.LatLng(p.lat, p.lng)
+          var position = new google.maps.LatLng(p.location.lat, p.location.lng)
           bounds.extend(position);
 
           var marker = new google.maps.Marker({
               position: position,
               map: map,
-              title: "\"<h3>" + p.temp['smhi'] + "</h3>\""
+              title: "\"<h3>" + p.temperatures['smhi'].temp + "</h3>\""
           });
 
+          var content = '';
+
+          for (var key in p.temperatures) {
+            content = content + key + ': ' + p.temperatures[key].temp + ' grader<br/>';
+          }
+
           var infoWindow = new google.maps.InfoWindow({
-              content: "<h3>" + p.temp['smhi'] + " grader</h3>"
+              content: content
           });
 
           // Allow each marker to have an info window
@@ -43,11 +49,17 @@ app.directive('map', function () {
           });
           map.fitBounds(bounds);
 
-          var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
-            this.setZoom(5);
-            google.maps.event.removeListener(boundsListener);
-          });
         });
+
+          var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+              console.log(this.getZoom());
+
+              if(this.getZoom() > 20){
+                this.setZoom(this.getZoom()-5);
+              }
+
+              google.maps.event.removeListener(boundsListener);
+          });
 
         scope.$on('update', function() {
           console.log('changed');
