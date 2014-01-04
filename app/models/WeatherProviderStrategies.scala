@@ -4,24 +4,33 @@ import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits._
 
 trait WeatherProviderStrategies {
-  this: SmhiProvider with YrProvider =>
+  this: Providers =>
 
   val smhi: Location => Future[LocationWithWeather] = { location =>
-    getLocationWithSmhiWeather(location)
+    providers("smhi").getLocationWithWeather(location)
+  }
+
+  val yr: Location => Future[LocationWithWeather] = { location =>
+    providers("yr").getLocationWithWeather(location)
   }
 
   val firstCompleted: Location => Future[LocationWithWeather] = { location =>
-      Future.firstCompletedOf(Seq(getLocationWithSmhiWeather(location), getLocationWithYrWeather(location)))
+    val weatherF = providers.values.map(_.getLocationWithWeather(location))
+    Future.firstCompletedOf(weatherF)
   }
 
   val withRecovery: Location => Future[LocationWithWeather] = { location =>
-      getLocationWithSmhiWeather(location).recoverWith {
-        case _ => getLocationWithYrWeather(location)
-      }
+    smhi(location).recoverWith {
+       case _ => yr(location)
+    }
   }
 
   val all: Location => Future[LocationWithWeather] = { location =>
-      Future.sequence(Seq(getLocationWithSmhiWeather(location), getLocationWithYrWeather(location))).map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _))
+      Future.sequence(
+        providers.values
+          .map(_.getLocationWithWeather(location)))
+          .map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _)
+      )
   }
 
 }

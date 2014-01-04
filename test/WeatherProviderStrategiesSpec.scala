@@ -1,0 +1,167 @@
+package models
+
+import org.junit.runner.RunWith
+import org.specs2.mutable._
+import org.specs2.runner._
+import org.joda.time.DateTime
+
+import scala.concurrent._
+import scala.concurrent.duration.Duration
+
+import ExecutionContext.Implicits.global
+import play.api.libs.concurrent
+
+/**
+ *
+ */
+@RunWith(classOf[JUnitRunner])
+class WeatherProviderStrategiesSpec extends Specification {
+
+  "WeatherProviderStrategies.smhi" should {
+
+    "return 10 degress" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = ""}
+      val locationWithWeatherF = strategy.smhi(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("smhi").temp must equalTo("10")
+    }
+  }
+
+  "WeatherProviderStrategies.yr" should {
+
+    "return 11 degress" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = ""}
+      val locationWithWeatherF = strategy.yr(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("yr").temp must equalTo("11")
+    }
+  }
+
+  "WeatherProviderStrategies.firstCompleted" should {
+
+    "return 10 degress if yr is delayed" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = "yr"}
+      val locationWithWeatherF = strategy.firstCompleted(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("smhi").temp must equalTo("10")
+    }
+  }
+
+  "WeatherProviderStrategies.firstCompleted" should {
+
+    "return 11 degress if smhi is delayed" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = "smhi"}
+      val locationWithWeatherF = strategy.firstCompleted(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("yr").temp must equalTo("11")
+    }
+  }
+
+  "WeatherProviderStrategies.withRecovery" should {
+
+    "return 10 degress if both smhi and yr succeeds" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = ""}
+      val locationWithWeatherF = strategy.withRecovery(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("smhi").temp must equalTo("10")
+    }
+  }
+
+  "WeatherProviderStrategies.withRecovery" should {
+
+    "return 11 degress if smhi fails" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = "smhi"; val sleep = ""}
+      val locationWithWeatherF = strategy.withRecovery(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("yr").temp must equalTo("11")
+    }
+  }
+
+  "WeatherProviderStrategies.withRecovery" should {
+
+    "return 10 degress if yr fails" in {
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = "yr"; val sleep = ""}
+      val locationWithWeatherF = strategy.withRecovery(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(1)
+      locationWithWeather.temperatures("smhi").temp must equalTo("10")
+    }
+  }
+
+  "WeatherProviderStrategies.all" should {
+
+    "return two locations with weather" in {
+
+      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = ""}
+      val locationWithWeatherF = strategy.all(Location("1.0","2.0", "addr1"))
+
+      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+
+      locationWithWeather.temperatures.size must equalTo(2)
+    }
+  }
+
+
+}
+
+trait DummyProviders extends Providers {
+  val fail: String
+  val sleep: String
+
+  val providers: Map[String, WeatherProvider] = Map(
+    "smhi" -> new WeatherProvider {
+      def getLocationWithWeather(location: Location) = {
+        val promise = Promise[LocationWithWeather]()
+
+        def success = promise.success(
+          LocationWithWeather(location, Map( "smhi" -> Weather(new DateTime(), "10")))
+        )
+
+        if(fail == "smhi")
+          promise.failure(new RuntimeException)
+        else if(sleep == "smhi")
+          future { Thread.sleep(1000) } onComplete { case _ => success }
+        else success
+
+        promise.future
+      }
+    },
+    "yr" -> new WeatherProvider {
+      def getLocationWithWeather(location: Location) = {
+        val promise = Promise[LocationWithWeather]()
+
+        def success = promise.success(
+          LocationWithWeather(location, Map( "yr" -> Weather(new DateTime(), "11")))
+        )
+
+        if(fail == "yr")
+          promise.failure(new RuntimeException)
+        else if(sleep == "yr")
+          future { Thread.sleep(1000) } onComplete { case _ => success }
+        else success
+
+        promise.future
+      }
+    }
+  )
+}
