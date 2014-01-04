@@ -8,7 +8,7 @@ import play.api.data.Forms._
 import models._
 import views._
 import play.api.data._
-
+import JsonHelper._
 
 object Application extends Controller with LocationProvider with WeatherProviderStrategies with ConcreteProviders {
 
@@ -40,9 +40,9 @@ object Application extends Controller with LocationProvider with WeatherProvider
   }
 
   def getWeatherAsJson(address: String) = {
-    getLocations(address) flatMap {
-      getWeather(_)
-    } map (s => Ok(toJson(s)))
+    getLocations(address)
+      .flatMap(getWeather(_))
+      .map(s => Ok(toJson(s)))
   }
 
   def index = Action.async {
