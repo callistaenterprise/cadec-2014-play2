@@ -27,10 +27,16 @@ trait WeatherProviderStrategies {
 
   val all: Location => Future[LocationWithWeather] = { location =>
       Future.sequence(
+<<<<<<< HEAD
+        Seq(getLocationWithSmhiWeather(location),
+            getLocationWithYrWeather(location)))
+      .map(xs => xs.tail
+        .fold(xs.head)(_ merge _))
+=======
         providers.values
           .map(_.getLocationWithWeather(location)))
           .map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _)
       )
+>>>>>>> 0ce92a15700c2b521bfa7029b4886448e3658042
   }
-
 }

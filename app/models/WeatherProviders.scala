@@ -23,12 +23,14 @@ trait SmhiProvider extends WeatherProvider {
 trait WeatherProviderImpl extends WeatherProvider {
 
   val providerName: String
+
   val parser:Response => Weather
+
   val providerUrl = config(s"$providerName.url")
 
   protected def format(baseUrl: String, location: Location): String
 
-  def getLocationWithWeather(location: Location):Future[LocationWithWeather]  = {
+  def getLocationWithWeather(location: Location) : Future[LocationWithWeather]  = {
     val serviceUrl = WS.url(format(providerUrl, location))
     val responseF = serviceUrl.get()
     val weatherF = responseF map parser
@@ -39,8 +41,7 @@ trait WeatherProviderImpl extends WeatherProvider {
 
 }
 
-
-trait YrProviderImpl extends YrProvider with WeatherProviderImpl {
+class YrProviderImpl extends YrProvider with WeatherProviderImpl {
 
   val providerName = "yr"
 
@@ -52,9 +53,7 @@ trait YrProviderImpl extends YrProvider with WeatherProviderImpl {
 
 }
 
-
-
-trait SmhiProviderImpl extends SmhiProvider with WeatherProviderImpl {
+class SmhiProviderImpl extends SmhiProvider with WeatherProviderImpl {
 
   val providerName = "smhi"
 
@@ -66,6 +65,10 @@ trait SmhiProviderImpl extends SmhiProvider with WeatherProviderImpl {
 
 }
 
+trait Providers {
+  val providers: Map[String, WeatherProvider]
+}
 
-
-trait ConcreteProviders extends SmhiProviderImpl with YrProviderImpl
+trait ConcreteProviders extends Providers {
+  val providers = Map("yr" -> new YrProviderImpl, "smhi" -> new SmhiProviderImpl)
+}
