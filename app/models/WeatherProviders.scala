@@ -20,7 +20,6 @@ trait SmhiProvider extends WeatherProvider {
 }
 
 
-
 trait WeatherProviderImpl extends WeatherProvider {
 
   val providerName: String
