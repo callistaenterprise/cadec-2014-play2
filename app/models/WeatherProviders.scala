@@ -11,7 +11,6 @@ trait WeatherProvider {
   def getLocationWithWeather(location: Location):Future[LocationWithWeather]
 }
 
-
 trait WeatherProviderImpl extends WeatherProvider {
 
   val providerName : String
