@@ -22,7 +22,7 @@ object Application extends Controller with LocationProvider with WeatherProvider
   )
 
 
-  def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map smhi)
+  def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
 
 
   def weatherPost() = Action.async(parse.json) {

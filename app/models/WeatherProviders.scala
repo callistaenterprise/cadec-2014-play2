@@ -11,23 +11,14 @@ trait WeatherProvider {
   def getLocationWithWeather(location: Location):Future[LocationWithWeather]
 }
 
-trait YrProvider extends WeatherProvider {
-  def getLocationWithYrWeather(location: Location) = getLocationWithWeather(location)
-}
-
-trait SmhiProvider extends WeatherProvider {
-  def getLocationWithSmhiWeather(location: Location) = getLocationWithWeather(location)
-}
-
-
 
 trait WeatherProviderImpl extends WeatherProvider {
 
-  val providerName: String
+  val providerName : String
 
-  val parser:Response => Weather
+  val parser : Response => Weather
 
-  val providerUrl = config(s"$providerName.url")
+  lazy val providerUrl = config(s"$providerName.url")
 
   protected def format(baseUrl: String, location: Location): String
 
@@ -42,7 +33,7 @@ trait WeatherProviderImpl extends WeatherProvider {
 
 }
 
-class YrProviderImpl extends YrProvider with WeatherProviderImpl {
+class YrProvider extends WeatherProviderImpl {
 
   val providerName = "yr"
 
@@ -54,7 +45,7 @@ class YrProviderImpl extends YrProvider with WeatherProviderImpl {
 
 }
 
-class SmhiProviderImpl extends SmhiProvider with WeatherProviderImpl {
+class SmhiProvider extends WeatherProviderImpl {
 
   val providerName = "smhi"
 
@@ -71,5 +62,5 @@ trait Providers {
 }
 
 trait ConcreteProviders extends Providers {
-  val providers = Map("yr" -> new YrProviderImpl, "smhi" -> new SmhiProviderImpl)
+  val providers = Map("yr" -> new YrProvider, "smhi" -> new SmhiProvider)
 }
