@@ -53,19 +53,15 @@ class WeatherProviderStrategiesSpec extends Specification {
       locationWithWeather.temperatures.size must equalTo(1)
       locationWithWeather.temperatures("smhi").temp must equalTo("10")
     }
-  }
-
-  "WeatherProviderStrategies.firstCompleted" should {
-
     "return 11 degress if smhi is delayed" in {
-      val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = "smhi"}
-      val locationWithWeatherF = strategy.firstCompleted(Location("1.0","2.0", "addr1"))
+       val strategy = new WeatherProviderStrategies with DummyProviders { val fail = ""; val sleep = "smhi"}
+       val locationWithWeatherF = strategy.firstCompleted(Location("1.0","2.0", "addr1"))
 
-      val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
+       val locationWithWeather = Await.result(locationWithWeatherF, Duration(2, "s"))
 
-      locationWithWeather.temperatures.size must equalTo(1)
-      locationWithWeather.temperatures("yr").temp must equalTo("11")
-    }
+       locationWithWeather.temperatures.size must equalTo(1)
+       locationWithWeather.temperatures("yr").temp must equalTo("11")
+     }
   }
 
   "WeatherProviderStrategies.withRecovery" should {
@@ -79,10 +75,6 @@ class WeatherProviderStrategiesSpec extends Specification {
       locationWithWeather.temperatures.size must equalTo(1)
       locationWithWeather.temperatures("smhi").temp must equalTo("10")
     }
-  }
-
-  "WeatherProviderStrategies.withRecovery" should {
-
     "return 11 degress if smhi fails" in {
       val strategy = new WeatherProviderStrategies with DummyProviders { val fail = "smhi"; val sleep = ""}
       val locationWithWeatherF = strategy.withRecovery(Location("1.0","2.0", "addr1"))
@@ -92,10 +84,6 @@ class WeatherProviderStrategiesSpec extends Specification {
       locationWithWeather.temperatures.size must equalTo(1)
       locationWithWeather.temperatures("yr").temp must equalTo("11")
     }
-  }
-
-  "WeatherProviderStrategies.withRecovery" should {
-
     "return 10 degress if yr fails" in {
       val strategy = new WeatherProviderStrategies with DummyProviders { val fail = "yr"; val sleep = ""}
       val locationWithWeatherF = strategy.withRecovery(Location("1.0","2.0", "addr1"))
