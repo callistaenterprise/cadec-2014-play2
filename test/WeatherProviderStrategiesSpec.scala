@@ -9,7 +9,6 @@ import scala.concurrent._
 import scala.concurrent.duration.Duration
 
 import ExecutionContext.Implicits.global
-import play.api.libs.concurrent
 
 /**
  *
@@ -128,40 +127,34 @@ trait DummyProviders extends Providers {
   val fail: String
   val sleep: String
 
-  val providers: Map[String, WeatherProvider] = Map(
-    "smhi" -> new WeatherProvider {
-      def getLocationWithWeather(location: Location) = {
-        val promise = Promise[LocationWithWeather]()
+  val promises = Seq("smhi", "yr").map(_ -> Promise[LocationWithWeather]()).toMap
 
-        def success = promise.success(
-          LocationWithWeather(location, Map( "smhi" -> Weather(new DateTime(), "10")))
+  def provider(name: String, degrees: String) = {
+    name -> new WeatherProvider {
+      def getLocationWithWeather(location: Location) = {
+
+        def success = promises(name).success(
+          LocationWithWeather(location, Map( name -> Weather(new DateTime(), degrees)))
         )
 
-        if(fail == "smhi")
-          promise.failure(new RuntimeException)
-        else if(sleep == "smhi")
-          future { Thread.sleep(1000) } onComplete { case _ => success }
+        if (fail == name)
+          promises(name).failure(new RuntimeException)
+        else if (sleep == name)
+          future {
+            Thread.sleep(1000)
+          } onComplete {
+            case _ => success
+          }
         else success
 
-        promise.future
-      }
-    },
-    "yr" -> new WeatherProvider {
-      def getLocationWithWeather(location: Location) = {
-        val promise = Promise[LocationWithWeather]()
-
-        def success = promise.success(
-          LocationWithWeather(location, Map( "yr" -> Weather(new DateTime(), "11")))
-        )
-
-        if(fail == "yr")
-          promise.failure(new RuntimeException)
-        else if(sleep == "yr")
-          future { Thread.sleep(1000) } onComplete { case _ => success }
-        else success
-
-        promise.future
+        promises(name).future
       }
     }
-  )
+  }
+
+  val providers: Map[String, WeatherProvider] =
+    Map(
+      provider("smhi", "10"),
+      provider("yr", "11")
+    )
 }
