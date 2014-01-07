@@ -2,6 +2,7 @@ package models
 
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits._
+import util.WithTiming
 
 trait WeatherProviderStrategies {
   this: Providers =>
@@ -28,7 +29,7 @@ trait WeatherProviderStrategies {
   val all: Location => Future[LocationWithWeather] = { location =>
       Future.sequence(
         providers.values
-          .map(_.getLocationWithWeather(location)))
+          .map(f => WithTiming(f.getLocationWithWeather(location))))
           .map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _)
       )
   }

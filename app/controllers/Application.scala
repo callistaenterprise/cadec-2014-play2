@@ -9,6 +9,9 @@ import models._
 import views._
 import play.api.data._
 import JsonHelper._
+import scala.util.{Success, Try}
+import play.api.libs.iteratee.Enumeratee
+import play.api.libs.EventSource
 
 object Application extends Controller with LocationProvider with WeatherProviderStrategies with ConcreteProviders {
 
@@ -24,7 +27,6 @@ object Application extends Controller with LocationProvider with WeatherProvider
 
   def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
 
-
   def weatherPost() = Action.async(parse.json) {
     implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
@@ -39,10 +41,24 @@ object Application extends Controller with LocationProvider with WeatherProvider
     getWeatherAsJson(address)
   }
 
-  def getWeatherAsJson(address: String) = {
-    getLocations(address)
-      .flatMap(getWeather(_))
-      .map(s => Ok(toJson(s)))
+  /**
+   * Method that returns a stream to be consumed by an HTML5 EventSource
+   *
+   * Try out with: curl -vN  http://localhost:9000/weatherstream/strandvägen
+   *
+   * @param address the address to search for
+   * @return Chuncked stream
+   */
+  def getWeatherStream(address: String) = Action.async { request =>
+    import util.EnumeratorUtil._
+
+    val enumerator = locationWithWeatherEnumerator[Location, LocationWithWeather](getLocations(address), _ map all)
+
+    val formatMessage = Enumeratee.map[Try[LocationWithWeather]] {
+      case Success(m) => toJson(m)
+    }
+
+    Future(Ok.chunked(enumerator through formatMessage through EventSource()).as(EVENT_STREAM))
   }
 
   def index = Action.async {
@@ -50,4 +66,11 @@ object Application extends Controller with LocationProvider with WeatherProvider
       Ok(html.main())
     }
   }
+
+  private def getWeatherAsJson(address: String) = {
+    getLocations(address)
+      .flatMap(getWeather)
+      .map(s => Ok(toJson(s)))
+  }
+
 }

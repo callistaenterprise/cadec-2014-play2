@@ -3,9 +3,10 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
-GET     /weather/:address           controllers.Application.weatherGet(address: String)
-POST    /weather                    controllers.Application.weatherPost
+GET         /                              controllers.Application.index
+GET         /weather/:address              controllers.Application.weatherGet(address: String)
+POST        /weather                       controllers.Application.weatherPost
+GET         /weatherstream/:address        controllers.Application.getWeatherStream(address: String)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                  controllers.Assets.at(path="/public", file)
