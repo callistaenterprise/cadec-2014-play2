@@ -25,7 +25,11 @@ object Application extends Controller with LocationProvider with WeatherProvider
   )
 
 
-  def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
+  def index = Action.async {
+    Future {
+      Ok(html.main())
+    }
+  }
 
   def weatherPost() = Action.async(parse.json) {
     implicit request =>
@@ -38,8 +42,17 @@ object Application extends Controller with LocationProvider with WeatherProvider
   }
 
   def weatherGet(address: String) = Action.async {
-    getWeatherAsJson(address)
+    getLocations(address)
+      .flatMap(getWeather)
+      .map(s => Ok(toJson(s)))
   }
+
+  private def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
+
+  private def getWeatherAsJson(address: String) =
+    getLocations(address)
+      .flatMap(getWeather)
+      .map(s => Ok(toJson(s)))
 
   /**
    * Method that returns a stream to be consumed by an HTML5 EventSource
@@ -60,17 +73,4 @@ object Application extends Controller with LocationProvider with WeatherProvider
 
     Future(Ok.chunked(enumerator through formatMessage through EventSource()).as(EVENT_STREAM))
   }
-
-  def index = Action.async {
-    Future {
-      Ok(html.main())
-    }
-  }
-
-  private def getWeatherAsJson(address: String) = {
-    getLocations(address)
-      .flatMap(getWeather)
-      .map(s => Ok(toJson(s)))
-  }
-
 }
