@@ -65,8 +65,13 @@ object Application extends Controller with LocationProvider with WeatherProvider
   def getWeatherStream(address: String) = Action.async { request =>
     import util.EnumeratorUtil._
 
-    val enumerator = locationWithWeatherEnumerator[Location, LocationWithWeather](getLocations(address), _ map all)
+    // When a location is complete with weather we want to stream it
+    def locationsToLocationsWithWeatherF(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
 
+    // Helper method that creates the enumerator
+    val enumerator = locationWithWeatherEnumerator(getLocations(address), locationsToLocationsWithWeatherF)
+
+    // Enumeratee that filters failures and formats the LocationWithWeather to a json object
     val formatMessage = Enumeratee.map[Try[LocationWithWeather]] {
       case Success(m) => toJson(m)
     }
