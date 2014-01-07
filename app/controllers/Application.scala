@@ -10,8 +10,14 @@ import views._
 import play.api.data._
 import JsonHelper._
 import scala.util.{Success, Try}
-import play.api.libs.iteratee.Enumeratee
+import play.api.libs.iteratee.{Enumerator, Concurrent, Enumeratee}
 import play.api.libs.EventSource
+import util.EnumeratorUtil._
+import scala.util.Success
+import models.Location
+import models.LocationWithWeather
+import models.Address
+import play.api.libs.json.JsValue
 
 object Application extends Controller with LocationProvider with WeatherProviderStrategies with ConcreteProviders {
 
@@ -49,6 +55,8 @@ object Application extends Controller with LocationProvider with WeatherProvider
 
   private def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
 
+  private def locationsToLocationsWithWeatherF(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
+
   private def getWeatherAsJson(address: String) =
     getLocations(address)
       .flatMap(getWeather)
@@ -65,8 +73,6 @@ object Application extends Controller with LocationProvider with WeatherProvider
   def getWeatherStream(address: String) = Action.async { request =>
     import util.EnumeratorUtil._
 
-    // When a location is complete with weather we want to stream it
-    def locationsToLocationsWithWeatherF(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
 
     // Helper method that creates the enumerator
     val enumerator = locationWithWeatherEnumerator(getLocations(address), locationsToLocationsWithWeatherF)
@@ -78,4 +84,30 @@ object Application extends Controller with LocationProvider with WeatherProvider
 
     Future(Ok.chunked(enumerator through formatMessage through EventSource()).as(EVENT_STREAM))
   }
+
+  /**
+   * WebSocket method that takes an address object { "address": "stockholm"} as input
+   * and returns weather messages on the output WebSocket channel
+   *
+   * Try it out at http://www.websocket.org
+   *
+   * @return
+   */
+  def getWeatherWs = WebSocket.using[JsValue] { request =>
+
+    val (iteratee, enumerator) = Concurrent.joined[JsValue]
+
+    val formatMessage = Enumeratee.map[Try[LocationWithWeather]] {
+       case Success(m) => toJson(m)
+    }
+
+    val f = Enumeratee.mapFlatten{
+      address : JsValue =>
+        val a = (address \ "address").toString()
+        locationWithWeatherEnumerator(getLocations(a), locationsToLocationsWithWeatherF) through formatMessage
+    }
+
+    (f(iteratee), enumerator)
+  }
+
 }
