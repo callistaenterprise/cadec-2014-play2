@@ -89,9 +89,11 @@ object Application extends Controller with LocationProvider with WeatherProvider
 
   // TODO: Explain helpers
   //
-  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
+  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
+    Future.sequence(locations.map(location =>  all(location)))
 
-  private def getLocationsWithWeatherFutures(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
+  private def getLocationsWithWeatherFutures(locations: Seq[Location]): Seq[Future[LocationWithWeather]] =
+    locations.map(location => all(location))
 
   private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
     // Get a locations future
