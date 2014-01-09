@@ -30,32 +30,66 @@ object Application extends Controller with LocationProvider with WeatherProvider
     )(Address.apply)(Address.unapply)
   )
 
-
+//  def index = Action.async {
+//    Future {
+//      Ok(html.simpleform(addressForm))
+//    }
+//  }
+  /**
+   * Simple action that displays the index page.
+   * @return
+   */
   def index = Action.async {
     Future {
       Ok(html.main())
     }
   }
 
+  /**
+   * Method that returns the location for an address as JSON.
+   * Mapped to the GET verb in routes.
+   *
+   * @param address
+   * @return
+   */
   def getLocationForAddressGet(address: String) = Action.async {
     getLocations(address).map(s => Ok(toJson(s)))
   }
 
+  /**
+   * Method that binds an address from the request. Looks up the
+   * locations for that address and then gets the weather for the
+   * locations according to a defined strategy.
+   * Mapped to the POST verb in routes
+   *
+   * @return
+   */
+//  def getLocationWithWeatherPost = Action.async /*(parse.json)*/ {
   def getLocationWithWeatherPost = Action.async(parse.json) {
     implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
       address => {
+        // Future(Ok(address.toString))
         getLocationsWithWeatherAsJson(address.address)
       })
   }
 
+  /**
+   * Method that returns a location with weather for an address.
+   * Mapped to the GET verb in routes
+   *
+   * @param address
+   * @return
+   */
   def getLocationsWithWeatherGet(address: String) = Action.async {
     getLocationsWithWeatherAsJson(address)
   }
 
-  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map firstCompleted)
+  // TODO: Explain helpers
+  //
+  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
 
   private def getLocationsWithWeatherFutures(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
 
