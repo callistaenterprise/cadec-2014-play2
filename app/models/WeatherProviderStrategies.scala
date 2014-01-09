@@ -7,13 +7,13 @@ import util.WithTiming
 trait WeatherProviderStrategies {
   this: Providers =>
 
-  val smhi: Location => Future[LocationWithWeather] = { location =>
-    providers("smhi").getLocationWithWeather(location)
+  def provider(name: String): Location => Future[LocationWithWeather] = { location =>
+    providers(name).getLocationWithWeather(location)
   }
 
-  val yr: Location => Future[LocationWithWeather] = { location =>
-    providers("yr").getLocationWithWeather(location)
-  }
+  val smhi = provider("smhi")
+
+  val yr = provider("yr")
 
   val firstCompleted: Location => Future[LocationWithWeather] = { location =>
     val weatherF = providers.values.map(_.getLocationWithWeather(location))

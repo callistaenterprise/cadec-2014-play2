@@ -9,8 +9,8 @@ import models._
 import views._
 import play.api.data._
 import JsonHelper._
-import scala.util.{Success, Try}
-import play.api.libs.iteratee.{Enumerator, Concurrent, Enumeratee}
+import scala.util.Try
+import play.api.libs.iteratee.{Concurrent, Enumeratee}
 import play.api.libs.EventSource
 import util.EnumeratorUtil._
 import scala.util.Success
@@ -37,31 +37,38 @@ object Application extends Controller with LocationProvider with WeatherProvider
     }
   }
 
-  def weatherPost() = Action.async(parse.json) {
+  def getLocationForAddressGet(address: String) = Action.async {
+    getLocations(address).map(s => Ok(toJson(s)))
+  }
+
+  def getLocationWithWeatherPost = Action.async(parse.json) {
     implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
       address => {
-        getWeatherAsJson(address.address)
+        getLocationsWithWeatherAsJson(address.address)
       })
   }
 
-  def weatherGet(address: String) = Action.async {
-    getLocations(address)
-      .flatMap(getWeather)
-      .map(s => Ok(toJson(s)))
+  def getLocationsWithWeatherGet(address: String) = Action.async {
+    getLocationsWithWeatherAsJson(address)
   }
 
-  private def getWeather(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map all)
+  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =  Future.sequence(locations map firstCompleted)
 
-  private def locationsToLocationsWithWeatherF(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
+  private def getLocationsWithWeatherFutures(locations: Seq[Location]): Seq[Future[LocationWithWeather]] = locations map all
 
-  private def getWeatherAsJson(address: String) =
-    getLocations(address)
-      .flatMap(getWeather)
-      .map(s => Ok(toJson(s)))
+  private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
+    // Get a locations future
+    val locationsF: Future[Seq[Location]] = getLocations(address)
 
+    // Get weather for each location i future
+    val locationsWithWeatherF: Future[Seq[LocationWithWeather]] = locationsF.flatMap(getLocationsWithWeatherFuture)
+
+    // Transform the locationWithWeatehr elements to json and return the future
+    locationsWithWeatherF.map(s => Ok(toJson(s)))
+  }
   /**
    * Method that returns a stream to be consumed by an HTML5 EventSource
    *
@@ -75,7 +82,7 @@ object Application extends Controller with LocationProvider with WeatherProvider
 
 
     // Helper method that creates the enumerator
-    val enumerator = locationWithWeatherEnumerator(getLocations(address), locationsToLocationsWithWeatherF)
+    val enumerator = locationWithWeatherEnumerator(getLocations(address), getLocationsWithWeatherFutures)
 
     // Enumeratee that filters failures and formats the LocationWithWeather to a json object
     val formatMessage = Enumeratee.map[Try[LocationWithWeather]] {
@@ -104,10 +111,10 @@ object Application extends Controller with LocationProvider with WeatherProvider
     val f = Enumeratee.mapFlatten{
       address : JsValue =>
         val a = (address \ "address").toString()
-        locationWithWeatherEnumerator(getLocations(a), locationsToLocationsWithWeatherF) through formatMessage
+        locationWithWeatherEnumerator(getLocations(a), getLocationsWithWeatherFutures) through formatMessage
     }
 
-    (f(iteratee), enumerator)
+    (iteratee, enumerator through f)
   }
 
 }

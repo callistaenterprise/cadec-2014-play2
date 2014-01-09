@@ -4,8 +4,10 @@
 
 # Home page
 GET         /                              controllers.Application.index
-GET         /weather/:address              controllers.Application.weatherGet(address: String)
-POST        /weather                       controllers.Application.weatherPost
+GET         /location/:address             controllers.Application.getLocationForAddressGet(address: String)
+GET         /weather/:address              controllers.Application.getLocationsWithWeatherGet(address: String)
+POST        /weather                       controllers.Application.getLocationWithWeatherPost
+
 GET         /weatherstream/:address        controllers.Application.getWeatherStream(address: String)
 GET         /weatherws                     controllers.Application.getWeatherWs
 
