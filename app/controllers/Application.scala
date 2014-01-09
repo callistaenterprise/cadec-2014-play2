@@ -19,7 +19,10 @@ import models.LocationWithWeather
 import models.Address
 import play.api.libs.json.JsValue
 
-object Application extends Controller with LocationProvider with WeatherProviderStrategies with ConcreteProviders {
+object Application extends Controller
+  with LocationProvider
+  with WeatherProviderStrategies
+  with ConcreteProviders {
 
   /**
    * Describe the computer form (used in both edit and create screens).
@@ -102,13 +105,13 @@ object Application extends Controller with LocationProvider with WeatherProvider
     // Get weather for each location i future
     val locationsWithWeatherF: Future[Seq[LocationWithWeather]] = locationsF.flatMap(getLocationsWithWeatherFuture)
 
-    // Transform the locationWithWeatehr elements to json and return the future
+    // Transform the locationWithWeather elements to json and return the future
     locationsWithWeatherF.map(s => Ok(toJson(s)))
   }
   /**
    * Method that returns a stream to be consumed by an HTML5 EventSource
    *
-   * Try out with: curl -vN  http://localhost:9000/weatherstream/strandvägen
+   * Try out with: curl -vN  http://localhost:9000/weatherstream/strandvagen
    *
    * @param address the address to search for
    * @return Chuncked stream
