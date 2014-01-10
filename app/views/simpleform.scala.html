@@ -10,19 +10,21 @@
 
     <title></title>
 
+    <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
     <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/map.css")">
 
-    <script src="@routes.Assets.at("javascripts/angular.min.js")"></script>
-    <script src="@routes.Assets.at("javascripts/controllers.js")"></script>
-    <script src="@routes.Assets.at("javascripts/directives.js")"></script>
+    <script src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARAKuvbDq5--OFb1P90GDIlOjNvw_xdrI&sensor=false"></script>
 </head>
 <body>
+    <div class="container">
 @import helper._
+@import util.ViewHelper._
 
      @form(action = routes.Application.getLocationWithWeatherPost){
-         @inputText(address("address"))
-        <input type="submit">
+        @inputText(address("address")) <br>
+        <input type="submit" class="btn-primary">
      }
+    </div>
 </body>
 </html>

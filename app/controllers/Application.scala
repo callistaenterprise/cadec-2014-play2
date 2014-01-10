@@ -30,20 +30,20 @@ object Application extends Controller
     )(Address.apply)(Address.unapply)
   )
 
-//  def index = Action.async {
-//    Future {
-//      Ok(html.simpleform(addressForm))
-//    }
-//  }
-  /**
-   * Simple action that displays the index page.
-   * @return
-   */
   def index = Action.async {
     Future {
-      Ok(html.main())
+      Ok(html.simpleform(addressForm))
     }
   }
+//  /**
+//   * Simple action that displays the index page.
+//   * @return
+//   */
+//  def index = Action.async {
+//    Future {
+//      Ok(html.main())
+//    }
+//  }
 
   /**
    * Method that returns the location for an address as JSON.
