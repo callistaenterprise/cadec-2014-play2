@@ -1,24 +1,25 @@
 package controllers
 
-import play.api.mvc._
-import play.api.libs.concurrent.Execution.Implicits._
-import scala.concurrent.Future
-import play.api.libs.json.Json._
-import play.api.data.Forms._
+import models.JsonHelper._
 import models._
-import views._
+
+import play.api.data.Forms._
 import play.api.data._
-import JsonHelper._
-import scala.util.Try
-import play.api.libs.iteratee.{Concurrent, Enumeratee}
 import play.api.libs.EventSource
-import util.EnumeratorUtil._
-import scala.util.Success
-import models.Location
-import models.LocationWithWeather
-import models.Address
+import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.iteratee.{Concurrent, Enumeratee}
 import play.api.libs.json.JsValue
+import play.api.libs.json.Json._
+import play.api.mvc._
+
 import providers.{WeatherProviderStrategies, ConcreteProviders}
+
+import scala.concurrent.Future
+import scala.util.Success
+import scala.util.Try
+
+import util.EnumeratorUtil._
+import views._
 
 object Application extends Controller
   with LocationProvider
@@ -109,6 +110,7 @@ object Application extends Controller
     // Transform the locationWithWeather elements to json and return the future
     locationsWithWeatherF.map(s => Ok(toJson(s)))
   }
+
   /**
    * Method that returns a stream to be consumed by an HTML5 EventSource
    *
