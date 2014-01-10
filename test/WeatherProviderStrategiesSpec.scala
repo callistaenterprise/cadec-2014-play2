@@ -116,18 +116,19 @@ trait DummyProviders extends Providers {
   val fail: String
   val sleep: String
 
-  val promises = Seq("smhi", "yr").map(_ -> Promise[LocationWithWeather]()).toMap
 
   def provider(name: String, degrees: String) = {
     name -> new WeatherProvider {
       def getLocationWithWeather(location: Location) = {
 
-        def success = promises(name).success(
+        val promise = Promise[LocationWithWeather]()
+
+        def success = promise.success(
           LocationWithWeather(location, Map( name -> Weather(new DateTime(), degrees)))
         )
 
         if (fail == name)
-          promises(name).failure(new RuntimeException)
+          promise.failure(new RuntimeException)
         else if (sleep == name)
           future {
             Thread.sleep(1000)
@@ -136,7 +137,7 @@ trait DummyProviders extends Providers {
           }
         else success
 
-        promises(name).future
+        promise.future
       }
     }
   }
