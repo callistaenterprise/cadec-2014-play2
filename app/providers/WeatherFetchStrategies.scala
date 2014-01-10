@@ -6,7 +6,7 @@ import util.WithTiming
 import providers.Providers
 import models.{LocationWithWeather, Location}
 
-trait WeatherProviderStrategies {
+trait WeatherFetchStrategies {
   this: Providers =>
 
   def provider(name: String): Location => Future[LocationWithWeather] = { location =>

@@ -9,7 +9,7 @@ import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
 import play.api.mvc._
-import providers.{LocationProvider, WeatherProviderStrategies, ConcreteProviders}
+import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
 import util.EnumeratorUtil._
 import views._
@@ -18,7 +18,7 @@ import models.JsonHelper._
 
 object Application extends Controller
   with LocationProvider
-  with WeatherProviderStrategies
+  with WeatherFetchStrategies
   with ConcreteProviders {
 
   /**
