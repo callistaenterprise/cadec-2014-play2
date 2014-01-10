@@ -1,8 +1,10 @@
-package models
+package providers
 
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits._
 import util.WithTiming
+import providers.Providers
+import models.{LocationWithWeather, Location}
 
 trait WeatherProviderStrategies {
   this: Providers =>

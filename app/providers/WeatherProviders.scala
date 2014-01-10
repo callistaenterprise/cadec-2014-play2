@@ -1,4 +1,4 @@
-package models
+package providers
 
 import play.api.libs.ws.WS
 import models.JsonHelper._
@@ -6,6 +6,7 @@ import scala.concurrent.Future
 import play.api.libs.ws.Response
 import play.api.libs.concurrent.Execution.Implicits._
 
+import models._
 
 trait WeatherProvider {
   def getLocationWithWeather(location: Location):Future[LocationWithWeather]
@@ -32,6 +33,9 @@ trait WeatherProviderImpl extends WeatherProvider {
 
 }
 
+/**
+ * Provider for YR
+ */
 class YrProvider extends WeatherProviderImpl {
 
   val providerName = "yr"
@@ -44,6 +48,9 @@ class YrProvider extends WeatherProviderImpl {
 
 }
 
+/**
+ * Provider for SMHI
+ */
 class SmhiProvider extends WeatherProviderImpl {
 
   val providerName = "smhi"

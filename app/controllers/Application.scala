@@ -18,6 +18,7 @@ import models.Location
 import models.LocationWithWeather
 import models.Address
 import play.api.libs.json.JsValue
+import providers.{WeatherProviderStrategies, ConcreteProviders}
 
 object Application extends Controller
   with LocationProvider
