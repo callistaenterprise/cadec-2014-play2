@@ -1,25 +1,20 @@
 package controllers
 
-import models.JsonHelper._
 import models._
-
 import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.EventSource
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.iteratee.{Concurrent, Enumeratee}
+import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
 import play.api.mvc._
-
 import providers.{WeatherProviderStrategies, ConcreteProviders}
-
 import scala.concurrent.Future
-import scala.util.Success
-import scala.util.Try
-
 import util.EnumeratorUtil._
 import views._
+import models.JsonHelper._
+
 
 object Application extends Controller
   with LocationProvider
@@ -120,18 +115,14 @@ object Application extends Controller
    * @return Chuncked stream
    */
   def getWeatherStream(address: String) = Action.async { request =>
-    import util.EnumeratorUtil._
-
 
     // Helper method that creates the enumerator
     val enumerator = locationWithWeatherEnumerator(getLocations(address), getLocationsWithWeatherFutures)
 
-    // Enumeratee that filters failures and formats the LocationWithWeather to a json object
-    val formatMessage = Enumeratee.map[Try[LocationWithWeather]] {
-      case Success(m) => toJson(m)
-    }
-
-    Future(Ok.chunked(enumerator through formatMessage through EventSource()).as(EVENT_STREAM))
+    Future(
+      Ok.chunked(
+        enumerator through locationWithWeatherToJson through EventSource()
+      ).as(EVENT_STREAM))
   }
 
   /**
@@ -146,17 +137,7 @@ object Application extends Controller
 
     val (iteratee, enumerator) = Concurrent.joined[JsValue]
 
-    val formatMessage = Enumeratee.map[Try[LocationWithWeather]] {
-       case Success(m) => toJson(m)
-    }
-
-    val f = Enumeratee.mapFlatten{
-      address : JsValue =>
-        val a = (address \ "address").toString()
-        locationWithWeatherEnumerator(getLocations(a), getLocationsWithWeatherFutures) through formatMessage
-    }
-
-    (iteratee, enumerator through f)
+    (iteratee, enumerator through addressToLocationWithWeatherEnumerator(getLocations, getLocationsWithWeatherFutures))
   }
 
 }

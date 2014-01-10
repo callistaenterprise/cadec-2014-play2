@@ -1,10 +1,16 @@
 package util
 
 import scala.concurrent.Future
-import play.api.libs.iteratee.{Concurrent, Enumerator}
-import scala.util.{Success, Try}
+import play.api.libs.iteratee.{Enumeratee, Concurrent, Enumerator}
+import scala.util.Try
 
 import play.api.libs.concurrent.Execution.Implicits._
+import models.{Location, LocationWithWeather}
+import play.api.libs.json.Json._
+import scala.util.Success
+import play.api.libs.json.JsValue
+
+import models.JsonHelper._
 
 /**
  *
@@ -40,4 +46,15 @@ object EnumeratorUtil {
           case scala.util.Failure(t) => channel.end(t)
         }
     }
+
+  def locationWithWeatherToJson = Enumeratee.map[Try[LocationWithWeather]] {
+    case Success(m) => toJson(m)
+  }
+
+  def addressToLocationWithWeatherEnumerator(locations: (String) => Future[Seq[Location]], f: => Seq[Location] => Seq[Future[LocationWithWeather]]) = Enumeratee.mapFlatten{
+    address : JsValue =>
+      val a = (address \ "address").toString()
+      locationWithWeatherEnumerator(locations(a), f) through locationWithWeatherToJson
+  }
+
 }
