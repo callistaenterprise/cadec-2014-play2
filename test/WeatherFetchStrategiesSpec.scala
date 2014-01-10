@@ -1,4 +1,4 @@
-package models
+package providers
 
 import org.junit.runner.RunWith
 import org.specs2.mutable._
@@ -9,13 +9,13 @@ import scala.concurrent._
 import scala.concurrent.duration.Duration
 
 import ExecutionContext.Implicits.global
-import providers.{WeatherFetchStrategies, Providers, WeatherProvider}
 
+import models._
 /**
  *
  */
 @RunWith(classOf[JUnitRunner])
-class WeatherProviderStrategiesSpec extends Specification {
+class WeatherFetchStrategiesSpec extends Specification {
 
   "WeatherProviderStrategies.smhi" should {
 
