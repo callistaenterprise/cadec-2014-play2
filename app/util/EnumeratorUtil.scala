@@ -40,7 +40,6 @@ object EnumeratorUtil {
                   if (elementsOut.forall(_.isCompleted)) channel.eofAndEnd()
                 }
               }
-
             }
           }
           case scala.util.Failure(t) => channel.end(t)

@@ -5,7 +5,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import util.WithTiming._
 import models.{LocationWithWeather, Location}
 
-trait WeatherProviderStrategies {
+trait WeatherFetchStrategies {
   this: Providers =>
 
   def provider(name: String): Location => Future[LocationWithWeather] = { location =>
