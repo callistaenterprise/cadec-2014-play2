@@ -43,13 +43,9 @@ object Application extends Controller
   }
 
 
-  def getAddress = Action.async { implicit request =>
-    addressForm.bindFromRequest.fold(formWithErrors => Future {
-      BadRequest("Unable to parse form")
-    },
-      address => Future {
-        Ok(address.toString)
-      })
+  def getAddress = Action.async {
+    //Todo add instructions for exercise 2
+    Future(???)
   }
 
   /**
