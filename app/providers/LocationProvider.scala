@@ -9,10 +9,7 @@ import scala.concurrent.Future
 
 trait LocationProvider {
   def getLocations(address: String): Future[Seq[Location]] = {
-    WS.url(config("maps.api"))
-      .withQueryString("address" -> address, "sensor" -> "false")
-      .get()
-      .map(response => responseToLocations(response))
+    ??? //Todo add instructions for exercise 4
   }
 
   private def responseToLocations(response: Response): Seq[Location] = (response.json \ "results").as[Seq[Location]]
