@@ -52,8 +52,8 @@ object Application extends Controller
    * @param address
    * @return
    */
-  def getLocationForAddress_GET(address: String) = {
-    ??? //Todo add instructions for exercise 4
+  def getLocationForAddress_GET(address: String) = Action.async {
+    Future(???) //Todo add instructions for exercise 4
   }
 
 
