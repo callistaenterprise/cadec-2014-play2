@@ -38,7 +38,7 @@ object Application extends Controller
    */
   def index = Action.async {
     Future {
-      Ok(html.main())
+      Ok(html.hello())
     }
   }
 
