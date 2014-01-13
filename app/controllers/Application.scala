@@ -52,7 +52,7 @@ object Application extends Controller
    * @param address
    * @return
    */
-  def getLocationForAddressGet(address: String) = Action.async {
+  def getLocationForAddress_GET(address: String) = Action.async {
     getLocations(address).map(s => Ok(toJson(s)))
   }
 
@@ -67,7 +67,7 @@ object Application extends Controller
    *
    * @return
    */
-  def getLocationWithWeatherPost = Action.async(parse.json) {
+  def getLocationWithWeather_POST = Action.async(parse.json) {
     implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
@@ -87,7 +87,7 @@ object Application extends Controller
    * @param address
    * @return
    */
-  def getLocationsWithWeatherGet(address: String) = Action.async {
+  def getLocationsWithWeather_GET(address: String) = Action.async {
     getLocationsWithWeatherAsJson(address)
   }
 
