@@ -98,17 +98,18 @@ object Application extends Controller
 
     // Get a locations future
     val locationsF: Future[Seq[Location]] =
-      getLocations(address)
+      ??? //Todo add instructions for exercise 5
 
     // Get weather for each location i future
     val locationsWithWeatherF: Future[Seq[LocationWithWeather]] =
-      locationsF.flatMap(locations => getLocationsWithWeatherFuture(locations))
+      ??? //Todo add instructions for exercise 5
 
     def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
-      Future.sequence(locations.map(location =>  smhi(location)))
+      ??? //Todo add instructions for exercise 5
 
     // Transform the locationWithWeather elements to json and return the future
-    locationsWithWeatherF.map(s => Ok(toJson(s)))
+    ??? //Todo add instructions for exercise 5
+
   }
 
 
