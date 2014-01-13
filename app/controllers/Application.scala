@@ -67,8 +67,7 @@ object Application extends Controller
    *
    * @return
    */
-  def getLocationWithWeather_POST = Action.async(parse.json) {
-    implicit request =>
+  def getLocationWithWeather_POST = Action.async(parse.json) { implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
@@ -95,13 +94,12 @@ object Application extends Controller
 
 
 
-  // TODO: Explain helpers
-  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
-    Future.sequence(locations.map(location =>  all(location)))
-
   private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
     // Get a locations future
     val locationsF: Future[Seq[Location]] = getLocations(address)
+
+    def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
+      Future.sequence(locations.map(location =>  all(location)))
 
     // Get weather for each location i future
     val locationsWithWeatherF: Future[Seq[LocationWithWeather]] = locationsF.flatMap(getLocationsWithWeatherFuture)
