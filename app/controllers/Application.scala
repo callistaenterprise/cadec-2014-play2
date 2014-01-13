@@ -72,7 +72,7 @@ object Application extends Controller
         BadRequest("Unable to parse form")
       },
       address => {
-        getLocationsWithWeatherAsJson(address.address)
+        ??? //Todo add instructions for exercise 6
       })
   }
 
