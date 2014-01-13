@@ -29,7 +29,7 @@ app.directive('map', function () {
           var marker = new google.maps.Marker({
               position: position,
               map: map,
-              title: "\"<h3>" + p.temperatures['smhi'].temp + "</h3>\""
+              title: ""
           });
 
           var content = '';
