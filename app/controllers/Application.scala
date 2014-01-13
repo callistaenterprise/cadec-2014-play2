@@ -43,7 +43,14 @@ object Application extends Controller
   }
 
 
-
+  def getAddress = Action.async { implicit request =>
+    addressForm.bindFromRequest.fold(formWithErrors => Future {
+      BadRequest("Unable to parse form")
+    },
+      address => Future {
+        Ok(address.toString)
+      })
+  }
 
   /**
    * Method that returns the location for an address as JSON.
