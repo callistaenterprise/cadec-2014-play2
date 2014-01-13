@@ -107,11 +107,11 @@ object Application extends Controller
     val locationsF: Future[Seq[Location]] =
       ??? //Todo add instructions for exercise 5
 
-    // Get weather for each location i future
-    val locationsWithWeatherF: Future[Seq[LocationWithWeather]] =
+    def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
       ??? //Todo add instructions for exercise 5
 
-    def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
+    // Get weather for each location i future
+    val locationsWithWeatherF: Future[Seq[LocationWithWeather]] =
       ??? //Todo add instructions for exercise 5
 
     // Transform the locationWithWeather elements to json and return the future
