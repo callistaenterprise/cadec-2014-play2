@@ -12,21 +12,28 @@ trait WeatherFetchStrategies {
     providers(name).getLocationWithWeather(location) withTiming
   }
 
-  val smhi: (Location) => Future[LocationWithWeather] = provider("smhi")
+  val smhi = provider("smhi")
 
-  val yr: (Location) => Future[LocationWithWeather] = provider("yr")
+  val yr = provider("yr")
 
   val firstCompleted: Location => Future[LocationWithWeather] = { location =>
-    yr(location)
-    ??? //Todo add instructions
+    val weatherF = providers.values.map(_.getLocationWithWeather(location) withTiming)
+    Future.firstCompletedOf(weatherF)
   }
 
   val withRecovery: Location => Future[LocationWithWeather] = { location =>
-    ??? //Todo add instructions
+    smhi(location).recoverWith {
+       case _ => yr(location)
+    }
   }
 
   val all: Location => Future[LocationWithWeather] = { location =>
-    ??? //Todo add instructions
+
+    Future.sequence(
+        providers.values
+          .map(f => f.getLocationWithWeather(location) withTiming))
+          .map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _)
+      )
   }
 
 }
