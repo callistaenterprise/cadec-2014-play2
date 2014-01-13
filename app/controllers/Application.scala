@@ -52,8 +52,8 @@ object Application extends Controller
    * @param address
    * @return
    */
-  def getLocationForAddress_GET(address: String) = Action.async {
-    getLocations(address).map(s => Ok(toJson(s)))
+  def getLocationForAddress_GET(address: String) = {
+    ??? //Todo add instructions for exercise 4
   }
 
 
