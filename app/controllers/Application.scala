@@ -33,17 +33,18 @@ object Application extends Controller
 
 
   /**
-   * Simple action that displays the index page.
+   * Övning 1
+   *
+   * Implementera en index Action som returnerar ett formulär.
+   * Använd hello.scala.html, glöm inte att fixa en route till din Action.
+   *
+   */
+
+
+  /**
+   *
    * @return
    */
-  def index = Action.async {
-    Future {
-      //Todo add instructions for exercise 1
-      ???
-    }
-  }
-
-
   def getAddress = Action.async {
     //Todo add instructions for exercise 2
     Future(???)

@@ -3,7 +3,10 @@
 # ~~~~
 
 # Home page
-GET         /                              controllers.Application.index
+
+# Övning 1
+# Lögg till en route till index
+
 POST        /location                      controllers.Application.getAddress
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
