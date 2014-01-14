@@ -5,10 +5,10 @@
 # Home page
 
 # Övning 1
-# Lögg till en route till index
+# Lägg till en route till index
 
 # Övning 2
-# Lögg till en route till getAddress
+# Lägg till en route till getAddress
 
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
