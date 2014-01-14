@@ -36,7 +36,7 @@ object Application extends Controller
    * Övning 1
    *
    * Implementera en index Action som returnerar ett formulär.
-   * Använd hello.scala.html, glöm inte att fixa en route till din Action.
+   * Använd simpleform.scala.html, glöm inte att fixa en route till din Action.
    *
    */
 
