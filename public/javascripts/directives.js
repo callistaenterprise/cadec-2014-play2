@@ -2,6 +2,8 @@ app.directive('map', function () {
   return {
     link: function (scope, elem, attrs) {
 
+      var bounds, map;
+
       function initialize() {
         var mapOptions = {
           center: new google.maps.LatLng(57.71,11.94),
@@ -18,41 +20,8 @@ app.directive('map', function () {
             position: google.maps.ControlPosition.TOP_RIGHT
           }
         };
-        var bounds = new google.maps.LatLngBounds();
-        var map = new google.maps.Map(elem[0], mapOptions);
-        console.log(map);
-
-        angular.forEach(scope.positions, function(p){
-          var position = new google.maps.LatLng(p.location.lat, p.location.lng)
-          bounds.extend(position);
-
-          var marker = new google.maps.Marker({
-              position: position,
-              map: map,
-              title: ""
-          });
-
-          var content = '';
-
-          for (var key in p.temperatures) {
-            content = content + key + ': ' + p.temperatures[key].temp + ' grader<br/>';
-          }
-
-          var infoWindow = new google.maps.InfoWindow({
-              content: content
-          });
-
-          // Allow each marker to have an info window
-          google.maps.event.addListener(marker, 'mouseover', function() {
-            infoWindow.open(map, marker);
-          });
-
-          google.maps.event.addListener(marker, 'mouseout', function() {
-            infoWindow.close();
-          });
-          map.fitBounds(bounds);
-
-        });
+        bounds = new google.maps.LatLngBounds();
+        map = new google.maps.Map(elem[0], mapOptions);
 
         var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
 
@@ -63,11 +32,43 @@ app.directive('map', function () {
           google.maps.event.removeListener(boundsListener);
         });
 
-        scope.$on('update', function() {
-          initialize();
-        })
-
       }
+
+      scope.$on('newPosition', function(e, p) {
+        var position = new google.maps.LatLng(p.location.lat, p.location.lng)
+        bounds.extend(position);
+
+        var marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: ""
+        });
+
+        var content = '';
+
+        for (var key in p.temperatures) {
+            content = content + key + ': ' + p.temperatures[key].temp + ' grader<br/>';
+        }
+
+        var infoWindow = new google.maps.InfoWindow({
+            content: content
+        });
+
+        // Allow each marker to have an info window
+        google.maps.event.addListener(marker, 'mouseover', function() {
+            infoWindow.open(map, marker);
+        });
+
+        google.maps.event.addListener(marker, 'mouseout', function() {
+            infoWindow.close();
+        });
+        map.fitBounds(bounds);
+      })
+
+      scope.$on('update', function() {
+        initialize();
+      })
+
       google.maps.event.addDomListener(window, 'load', initialize);
     }
   };
