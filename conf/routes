@@ -7,7 +7,9 @@
 # Övning 1
 # Lögg till en route till index
 
-POST        /location                      controllers.Application.getAddress
+# Övning 2
+# Lögg till en route till getAddress
+
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
 POST        /weather                       controllers.Application.getLocationWithWeather_POST

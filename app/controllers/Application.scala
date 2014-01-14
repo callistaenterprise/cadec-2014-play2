@@ -42,13 +42,17 @@ object Application extends Controller
 
 
   /**
-   *
-   * @return
+   * Övning 2
+   * Implementera en Action som hanterar en POST från simpleform.scala.html
+   * Lägg till en route från /location till din Action
    */
-  def getAddress = Action.async {
-    //Todo add instructions for exercise 2
-    Future(???)
-  }
+
+
+  /**
+   * Övning 3
+   * Se till att din Action som du skapade i Övning 2 kan hantera json
+   */
+
 
   /**
    * Method that returns the location for an address as JSON.
