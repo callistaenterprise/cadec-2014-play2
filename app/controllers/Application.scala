@@ -114,21 +114,32 @@ object Application extends Controller
 
   private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
 
+    /**
+     * Övning 5
+     * Nu är det dags att hämta vädret för en Location. Använd getLocation som du implementerade
+     * i övning 4 för att hämta locations. Använd sedan en WeatherProvider (smhi eller yr)
+     * för att hämta vädret för samtliga locations.
+     *
+     * Returnera json
+     */
+
     // Get a locations future
     val locationsF: Future[Seq[Location]] =
-      ??? //Todo add instructions for exercise 5
+      ??? //Hämta alla locations för en specific adress
 
     def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
-      ??? //Todo add instructions for exercise 5
+      ??? // Hämta weather för varje location från en WeatherProvider
 
     // Get weather for each location i future
     val locationsWithWeatherF: Future[Seq[LocationWithWeather]] =
-      ??? //Todo add instructions for exercise 5
+      ??? //Hämta vädret för alla locations i locationF
 
-    // Transform the locationWithWeather elements to json and return the future
-    ??? //Todo add instructions for exercise 5
+
+    ??? //Transformera alla locationWithWeather-element till json och returnera futuren
 
   }
+
+
 
 
 }
