@@ -62,7 +62,16 @@ object Application extends Controller
    * @return
    */
   def getLocationForAddress_GET(address: String) = Action.async {
-    Future(???) //Todo add instructions for exercise 4
+    Future {
+
+      /**
+       * Övning 4
+       * Hämta locations utifrån en adress. Använd getLocations i LocationProvider.
+       * OBS! Glöm inte att du måste implementera getLocations själv
+       */
+
+      ???
+    }
   }
 
 
