@@ -4,12 +4,15 @@
 
 # Home page
 GET         /                              controllers.Application.index
-GET         /location/:address             controllers.Application.getLocationForAddressGet(address: String)
-GET         /weather/:address              controllers.Application.getLocationsWithWeatherGet(address: String)
-POST        /weather                       controllers.Application.getLocationWithWeatherPost
+POST        /location                      controllers.Application.getAddress
+GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
+GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
+POST        /weather                       controllers.Application.getLocationWithWeather_POST
 
-GET         /weatherstream/:address        controllers.Application.getWeatherStream(address: String)
-GET         /weatherws                     controllers.Application.getWeatherWs
+
+# Web Socket implementation
+GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)
+GET         /weatherws                     controllers.WebSocketApplication.getWeatherWs
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
