@@ -1,19 +1,16 @@
 package controllers
 
-import models._
-import play.api.data.Forms._
-import play.api.data._
+import models.JsonHelper._
+import models.Location
+import models.LocationWithWeather
 import play.api.libs.EventSource
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.iteratee.Concurrent
+import play.api.libs.iteratee.{Enumeratee, Enumerator, Concurrent}
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
 import play.api.mvc._
 import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
-import util.EnumeratorUtil._
-import views._
-import models.JsonHelper._
 
 
 object WebSocketApplication extends Controller
@@ -24,6 +21,19 @@ object WebSocketApplication extends Controller
   private def getLocationsWithWeatherFutures(locations: Seq[Location]): Seq[Future[LocationWithWeather]] =
     locations.map(location => all(location))
 
+  private def toEnumerator[T](f: Future[T]) = Enumerator.flatten(f.map(v => Enumerator(v)))
+
+  private val locationToLocationWithWeather = Enumeratee.mapFlatten[Seq[Location]]{
+    locations => Enumerator.interleave(
+      getLocationsWithWeatherFutures(locations).map { locationWithWeatherF =>
+        toEnumerator(locationWithWeatherF)
+      }
+    )
+  }
+
+  private val locationWithWeatherToJson = Enumeratee.map[LocationWithWeather] {
+    case m => toJson(m)
+  }
 
   /**
    * Method that returns a stream to be consumed by an HTML5 EventSource
@@ -35,12 +45,11 @@ object WebSocketApplication extends Controller
    */
   def getWeatherStream(address: String) = Action.async { request =>
 
-    // Helper method that creates the enumerator
-    val enumerator = locationWithWeatherEnumerator(getLocations(address), getLocationsWithWeatherFutures)
+    val locationEnumerator = toEnumerator(getLocations(address))
 
     Future(
       Ok.chunked(
-        enumerator through locationWithWeatherToJson through EventSource()
+        locationEnumerator through locationToLocationWithWeather through locationWithWeatherToJson through EventSource()
       ).as(EVENT_STREAM))
   }
 
@@ -56,7 +65,15 @@ object WebSocketApplication extends Controller
 
     val (iteratee, enumerator) = Concurrent.joined[JsValue]
 
-    (iteratee, enumerator through addressToLocationWithWeatherEnumerator(getLocations, getLocationsWithWeatherFutures))
+    val addressJsToAddress = Enumeratee.mapFlatten[JsValue]{
+      addressJs => Enumerator((addressJs \ "address").toString())
+    }
+
+    val addressToLocation = Enumeratee.mapFlatten[String]{
+      address => toEnumerator(getLocations(address))
+    }
+
+    (iteratee, enumerator &> addressJsToAddress &> addressToLocation &> locationToLocationWithWeather &> locationWithWeatherToJson)
   }
 
 }

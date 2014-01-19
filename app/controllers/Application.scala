@@ -3,15 +3,11 @@ package controllers
 import models._
 import play.api.data.Forms._
 import play.api.data._
-import play.api.libs.EventSource
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.iteratee.Concurrent
-import play.api.libs.json.JsValue
 import play.api.libs.json.Json._
 import play.api.mvc._
 import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
-import util.EnumeratorUtil._
 import views._
 import models.JsonHelper._
 
