@@ -65,8 +65,8 @@ object WebSocketApplication extends Controller
 
     val (iteratee, enumerator) = Concurrent.joined[JsValue]
 
-    val addressJsToAddress = Enumeratee.mapFlatten[JsValue]{
-      addressJs => Enumerator((addressJs \ "address").toString())
+    val addressJsToAddress = Enumeratee.map[JsValue]{
+      addressJs => (addressJs \ "address").toString()
     }
 
     val addressToLocation = Enumeratee.mapFlatten[String]{
