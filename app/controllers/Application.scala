@@ -1,6 +1,7 @@
 package controllers
 
 import models._
+import models.JsonHelper._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.EventSource
@@ -13,7 +14,6 @@ import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
 import util.EnumeratorUtil._
 import views._
-import models.JsonHelper._
 
 
 object Application extends Controller
