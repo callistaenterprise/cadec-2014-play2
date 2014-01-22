@@ -63,9 +63,9 @@ with ConcreteProviders {
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
-        address => Future {
-          getLocationsWithWeatherAsJson(address.address)
-        })
+      address => {
+        getLocationsWithWeatherAsJson(address.address)
+      })
   }
 
 
