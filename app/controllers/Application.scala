@@ -81,7 +81,7 @@ with ConcreteProviders {
   }
 
 
-  def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
+  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
     Future.sequence(locations.map(location => smhi(location)))
 
 
