@@ -63,7 +63,7 @@ with ConcreteProviders {
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
-        address => Future {
+        address => {
           /**
            * Övning 3
            * Hämta alla WeatherWithLocations för aktuell adress och sätt
