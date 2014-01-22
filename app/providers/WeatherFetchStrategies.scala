@@ -17,16 +17,7 @@ trait WeatherFetchStrategies {
   val yr: (Location) => Future[LocationWithWeather] = provider("yr")
 
   val firstCompleted: Location => Future[LocationWithWeather] = { location =>
-  /**
-   * Övning 4
-   * Returnera svaret från den vädertjänst(smhi eller yr) som är först klar. Använd metoden
-   * firstCompletedOf som finns i Future-apit.
-   *
-   * För att testa måste du byta ut den strategin vi använder (smhi) i
-   * getLocationsWithWeatherFuture i Application.scala.
-   */
-
-    ???
+    Future.firstCompletedOf(Seq(smhi(location), yr(location)))
   }
 
   val withRecovery: Location => Future[LocationWithWeather] = { location =>
