@@ -27,6 +27,10 @@ trait WeatherFetchStrategies {
     }
   }
 
+  /**
+   * Collects weather from all providers and merge the result into a
+   * LocationWithWeather.
+   */
   val all: Location => Future[LocationWithWeather] = { location =>
 
     Future.sequence(
