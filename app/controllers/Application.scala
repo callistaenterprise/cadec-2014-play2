@@ -8,6 +8,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc._
 import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
+import play.api.libs.json.Json._
 
 
 object Application extends Controller
@@ -33,20 +34,7 @@ with ConcreteProviders {
    * @return
    */
   def getLocationForAddress_GET(address: String) = Action.async {
-    Future {
-
-      /**
-       * Övning 1
-       * Hämta locations för en adress. Använd getLocations i LocationProvider.
-       *
-       * OBS! Du måste implementera getLocations själv.
-       *
-       * I routes-filen har vi mappat /weather/:address hit. Så testkör i en
-       * browser för att se så att du gjort rätt.
-       */
-
-      ???
-    }
+    getLocations(address).map(s => Ok(toJson(s)))
   }
 
 
