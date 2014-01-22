@@ -75,50 +75,15 @@ with ConcreteProviders {
   }
 
 
-  /**
-   * Övning 2
-   * I denna övning skall vi hämta alla locations för en given adress och slå ihop
-   * med vädret (model.Weather) varje enskild location (model.Location).
-   *
-   * Vi kommer då få en Future av en lista med WeatherWithLocation som vi kan
-   * returenra som Json.
-   *
-   * Gör klart de två nedanstående privata metoderna.
-   *
-   * Lägg till en route i routes-filen från /location/:address till
-   * getLocationsWithWeather_GET ovan. Testkör t.ex. från en browser.
-   */
-
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
-    /**
-
-      Future.sequence(
-         Ersätt innehållet i detta block med kod som hämtar vädret
-         från smhi, detta skall göras för samtliga location i locations.
-
-         Använd funktionen <smhi: (Location) => Future[LocationWithWeather]>
-         som finns tillgänglig i scopet via trait:en WeatherFetchStrategies
-      )
-
-    */
-
-    ??? //Ta bort denna rad
+    Future.sequence(locations.map(location => smhi(location)))
   }
 
   private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
-    /**
-
-      Fyll i det som saknas vid pilarna.
-
-        for {
-          locations <- ??? Hämta alla locations för en adress
-          locationsWithWeather <- ???  H
-        } yield Ok(toJson(locationsWithWeather))
-
-    */
-
-    ??? //Ta bort denna rad
-
+    for {
+      locations <- getLocations(address)
+      locationsWithWeather <- getLocationsWithWeatherFuture(locations)
+    } yield Ok(toJson(locationsWithWeather))
   }
 
 }
