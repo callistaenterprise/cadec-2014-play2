@@ -13,9 +13,9 @@ import views._
 
 
 object Application extends Controller
-  with LocationProvider
-  with WeatherFetchStrategies
-  with ConcreteProviders {
+with LocationProvider
+with WeatherFetchStrategies
+with ConcreteProviders {
 
   /**
    * Describe the computer form (used in both edit and create screens).
@@ -27,7 +27,6 @@ object Application extends Controller
   )
 
 
-
   /**
    * Simple action that displays the index page.
    * @return
@@ -37,8 +36,6 @@ object Application extends Controller
       Ok(html.main())
     }
   }
-
-
 
 
   /**
@@ -53,8 +50,6 @@ object Application extends Controller
   }
 
 
-
-
   /**
    * Method that binds an address from the request. Looks up the
    * locations for that address and then gets the weather for the
@@ -63,16 +58,15 @@ object Application extends Controller
    *
    * @return
    */
-  def getLocationWithWeather_POST = Action.async(parse.json) { implicit request =>
+  def getLocationWithWeather_POST = Action.async(parse.json) {
+    implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
-      address => {
-        getLocationsWithWeatherAsJson(address.address)
-      })
+        address => Future {
+          getLocationsWithWeatherAsJson(address.address)
+        })
   }
-
-
 
 
   /**
@@ -87,19 +81,15 @@ object Application extends Controller
   }
 
 
-
+  def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
+    Future.sequence(locations.map(location => smhi(location)))
 
 
   private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
-
-    def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
-      Future.sequence(locations map smhi)
-
     for {
       locations <- getLocations(address)
       locationsWithWeather <- getLocationsWithWeatherFuture(locations)
     } yield Ok(toJson(locationsWithWeather))
-
   }
 
 
