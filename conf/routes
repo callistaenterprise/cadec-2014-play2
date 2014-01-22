@@ -4,16 +4,11 @@
 
 # Home page
 
-# Övning 1
-# Lägg till en route till index
-
-# Övning 2
-# Lägg till en route till getAddress
-
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
-POST        /weather                       controllers.Application.getLocationWithWeather_POST
 
+# Övning 3
+# Sätt upp en POST route från /location till getLocationWithWeather_POST
 
 # Web Socket implementation
 GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)

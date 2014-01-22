@@ -4,22 +4,16 @@ import models._
 import models.JsonHelper._
 import play.api.data.Forms._
 import play.api.data._
-import play.api.libs.EventSource
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.libs.iteratee.Concurrent
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json._
 import play.api.mvc._
 import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
-import util.EnumeratorUtil._
-import views._
 
 
 object Application extends Controller
-  with LocationProvider
-  with WeatherFetchStrategies
-  with ConcreteProviders {
+with LocationProvider
+with WeatherFetchStrategies
+with ConcreteProviders {
 
   /**
    * Describe the computer form (used in both edit and create screens).
@@ -29,29 +23,6 @@ object Application extends Controller
       "address" -> nonEmptyText
     )(Address.apply)(Address.unapply)
   )
-
-
-
-  /**
-   * Övning 1
-   *
-   * Implementera en index Action som returnerar ett formulär.
-   * Använd simpleform.scala.html, glöm inte att fixa en route till din Action.
-   *
-   */
-
-
-  /**
-   * Övning 2
-   * Implementera en Action som hanterar en POST från simpleform.scala.html
-   * Lägg till en route från /location till din Action
-   */
-
-
-  /**
-   * Övning 3
-   * Se till att din Action som du skapade i Övning 2 kan hantera json
-   */
 
 
   /**
@@ -65,16 +36,18 @@ object Application extends Controller
     Future {
 
       /**
-       * Övning 4
-       * Hämta locations utifrån en adress. Använd getLocations i LocationProvider.
-       * OBS! Glöm inte att du måste implementera getLocations själv
+       * Övning 1
+       * Hämta locations för en adress. Använd getLocations i LocationProvider.
+       *
+       * OBS! Du måste implementera getLocations själv.
+       *
+       * I routes-filen har vi mappat /weather/:address hit. Så testkör i en
+       * browser för att se så att du gjort rätt.
        */
 
       ???
     }
   }
-
-
 
 
   /**
@@ -85,21 +58,26 @@ object Application extends Controller
    *
    * @return
    */
-  def getLocationWithWeather_POST = Action.async(parse.json) { implicit request =>
+  def getLocationWithWeather_POST = Action.async(parse.json) {
+    implicit request =>
       addressForm.bindFromRequest.fold(formWithErrors => Future {
         BadRequest("Unable to parse form")
       },
-      address => {
-        ??? //Todo add instructions for exercise 6
-      })
+        address => Future {
+          /**
+           * Övning 3
+           * Hämta alla WeatherWithLocations för aktuell adress och sätt
+           * upp en route hit i routes-filen. Det skall vara en POST och
+           * ligga på /weather.
+           */
+          ???
+        })
   }
-
-
 
 
   /**
    * Method that returns a location with weather for an address.
-   * Mapped to the GET verb in routes
+   * Mapped to the GET verb and the path /locations/:address in routes
    *
    * @param address
    * @return
@@ -109,37 +87,51 @@ object Application extends Controller
   }
 
 
+  /**
+   * Övning 2
+   * I denna övning skall vi hämta alla locations för en given adress och slå ihop
+   * med vädret (model.Weather) varje enskild location (model.Location).
+   *
+   * Vi kommer då få en Future av en lista med WeatherWithLocation som vi kan
+   * returenra som Json.
+   *
+   * Gör klart de två nedanstående privata metoderna.
+   *
+   * I routes-filen har vi mappat /location/:address till metoden
+   * getLocationsWithWeather_GET ovan. Så testkör i en browser för att se så att
+   * du gjort rätt.
+   */
 
-
-
-  private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
-
+  private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
     /**
-     * Övning 5
-     * Nu är det dags att hämta vädret för en Location. Använd getLocation som du implementerade
-     * i övning 4 för att hämta locations. Använd sedan en WeatherProvider (smhi eller yr)
-     * för att hämta vädret för samtliga locations.
-     *
-     * Returnera json
-     */
 
-    // Get a locations future
-    val locationsF: Future[Seq[Location]] =
-      ??? //Hämta alla locations för en specific adress
+      Future.sequence(
+         Ersätt innehållet i detta block med kod som hämtar vädret
+         från smhi, detta skall göras för samtliga location i locations.
 
-    def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
-      ??? // Hämta weather för varje location från en WeatherProvider
+         Använd funktionen <smhi: (Location) => Future[LocationWithWeather]>
+         som finns tillgänglig i scopet via trait:en WeatherFetchStrategies
+      )
 
-    // Get weather for each location i future
-    val locationsWithWeatherF: Future[Seq[LocationWithWeather]] =
-      ??? //Hämta vädret för alla locations i locationF
+    */
 
-
-    ??? //Transformera alla locationWithWeather-element till json och returnera futuren
-
+    ??? //Ta bort denna rad
   }
 
+  private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
+    /**
 
+      Fyll i det som saknas vid pilarna.
 
+        for {
+          locations <- ??? Hämta alla locations för en adress
+          locationsWithWeather <- ???  H
+        } yield Ok(toJson(locationsWithWeather))
+
+    */
+
+    ??? //Ta bort denna rad
+
+  }
 
 }

@@ -17,15 +17,42 @@ trait WeatherFetchStrategies {
   val yr: (Location) => Future[LocationWithWeather] = provider("yr")
 
   val firstCompleted: Location => Future[LocationWithWeather] = { location =>
-    ??? //Todo add instructions
+  /**
+   * Övning 4
+   * Returnera svaret från den vädertjänst(smhi eller yr) som är först klar. Använd metoden
+   * firstCompletedOf som finns i Future-apit.
+   *
+   * För att testa måste du byta ut den strategin vi använder (smhi) i
+   * getLocationsWithWeatherFuture i Application.scala.
+   */
+
+    ???
   }
 
   val withRecovery: Location => Future[LocationWithWeather] = { location =>
-    ??? //Todo add instructions
+
+  /**
+   * Övning 5
+   * En future har en funktion, recoverWith, som kan köras om den fallerar.
+   * Använd denna för att slå mot yr om smhi skulle råka vara nere.
+   *
+   * Testa genom att byta ut strategin vi använder i getLocationsWithWeatherFuture
+   * i Application.scala. För att testa felhanteringen kan du gå in i
+   * application.conf och ändra till en felaktig url för smhi (smhi.url).
+   */
+    ???
   }
 
+  /**
+   * Collects weather from all providers and merge the result into a
+   * LocationWithWeather.
+   */
   val all: Location => Future[LocationWithWeather] = { location =>
-    ??? //Todo add instructions
+    Future.sequence(
+      providers.values
+        .map(f => f.getLocationWithWeather(location)))
+        .map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _)
+      )
   }
 
 }
