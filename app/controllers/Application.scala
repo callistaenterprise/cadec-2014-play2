@@ -85,9 +85,8 @@ with ConcreteProviders {
    *
    * Gör klart de två nedanstående privata metoderna.
    *
-   * I routes-filen har vi mappat /location/:address till metoden
-   * getLocationsWithWeather_GET ovan. Så testkör i en browser för att se så att
-   * du gjort rätt.
+   * Lägg till en route i routes-filen från /location/:address till
+   * getLocationsWithWeather_GET ovan. Testkör t.ex. från en browser.
    */
 
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
