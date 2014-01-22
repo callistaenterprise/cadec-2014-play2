@@ -4,11 +4,16 @@
 
 # Home page
 
-GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
-GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
+# Övning 1
+# Sätt upp en GET route från /location/:address till getLocationForAddress_GET
+
+# Övning 2
+# Sätt upp en GET route från /weather/:address till getLocationsWithWeather_GET
 
 # Övning 3
 # Sätt upp en POST route från /location till getLocationWithWeather_POST
+
+
 
 # Web Socket implementation
 GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)

@@ -8,7 +8,7 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc._
 import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
-
+import play.api.libs.json.Json._
 
 object Application extends Controller
 with LocationProvider
@@ -26,28 +26,17 @@ with ConcreteProviders {
 
 
   /**
-   * Method that returns the location for an address as JSON.
-   * Mapped to the GET verb in routes.
+   * Övning 1
+   * Hämta locations för en adress. Använd getLocations i LocationProvider.
    *
-   * @param address
-   * @return
+   * OBS! Du måste implementera getLocations själv.
+   *
+   * Lägg till en route i routes-filen från /weather/:address till
+   * getLocationForAddress_GET. Testkör t.ex. från en browser.
    */
-  def getLocationForAddress_GET(address: String) = Action.async {
-    Future {
-
-      /**
-       * Övning 1
-       * Hämta locations för en adress. Använd getLocations i LocationProvider.
-       *
-       * OBS! Du måste implementera getLocations själv.
-       *
-       * I routes-filen har vi mappat /weather/:address hit. Så testkör i en
-       * browser för att se så att du gjort rätt.
-       */
-
-      ???
-    }
-  }
+//  def getLocationForAddress_GET(address: String) = Action.async {
+//    ???
+//  }
 
 
   /**
@@ -97,9 +86,8 @@ with ConcreteProviders {
    *
    * Gör klart de två nedanstående privata metoderna.
    *
-   * I routes-filen har vi mappat /location/:address till metoden
-   * getLocationsWithWeather_GET ovan. Så testkör i en browser för att se så att
-   * du gjort rätt.
+   * Lägg till en route i routes-filen från /location/:address till
+   * getLocationsWithWeather_GET ovan. Testkör t.ex. från en browser.
    */
 
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
