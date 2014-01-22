@@ -52,13 +52,7 @@ with ConcreteProviders {
         BadRequest("Unable to parse form")
       },
         address => {
-          /**
-           * Övning 3
-           * Hämta alla WeatherWithLocations för aktuell adress och sätt
-           * upp en route hit i routes-filen. Det skall vara en POST och
-           * ligga på /weather.
-           */
-          ???
+          getLocationsWithWeatherAsJson(address.address)
         })
   }
 
