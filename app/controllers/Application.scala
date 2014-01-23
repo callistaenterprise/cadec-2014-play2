@@ -77,7 +77,7 @@ with ConcreteProviders {
 
 
   /**
-   * Övning 2
+   * Övning 3
    * I denna övning skall vi hämta alla locations för en given adress och slå ihop
    * med vädret (model.Weather) varje enskild location (model.Location).
    *
