@@ -33,6 +33,9 @@ with ConcreteProviders {
    *
    * Lägg till en route i routes-filen från /weather/:address till
    * getLocationForAddress_GET. Testkör t.ex. från en browser.
+   *
+   * Länk till wiki:
+   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-2-h%C3%A4mta-koordinater-f%C3%B6r-en-adress
    */
 //  def getLocationForAddress_GET(address: String) = Action.async {
 //    ???
