@@ -8,13 +8,13 @@ Instruktioner för att sätta upp en utvecklingsmiljö finns [här](https://gith
 
 Övning 1: Hämta koordinater för en adress
 ---------------------
-I första övningen ska vi söka fram koordinater för en adress från Google's kart-API. En adress (t.ex "Storgatan") kan finnas flera gånger, därför får man tillbaks en lista med koordinater i objektet 'Location', dessa ska sedan returneras till användaren på URL:en http://localhost:9000/location/[adress]
+I första övningen ska vi söka fram koordinater för en adress från Google's kart-API. En adress (t.ex "Storgatan") kan finnas flera gånger, därför får man tillbaks en lista med koordinater i objektet 'Location', dessa ska sedan returneras till användaren på URL:en http://localhost:9000/location/{adress}
 
 Övningen är uppdelad i två delar. Först måste metoden 'getLocation' implementeras i [LocationProvider](https://github.com/callistaenterprise/play2-cadec/blob/master/app/providers/LocationProvider.scala). Vidare instruktioner finns i klassen. 
 
-Sedan ska metoden 'getLocation' anropas från själva GET-metoden som finns definierad i controller-klassen [Application|https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala]. Man behöver även ange en korrekt route mellan URL:en '/weather/:address' och metoden 'getLocationForAddress_GET' i [routes-konfigurations-filen](https://github.com/callistaenterprise/play2-cadec/blob/master/conf/routes).
+Sedan ska metoden 'getLocation' anropas från själva GET-metoden som finns definierad i controller-klassen [Application](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala). Man behöver även ange en korrekt route mellan URL:en '/weather/:address' och metoden 'getLocationForAddress_GET' i [routes-konfigurations-filen](https://github.com/callistaenterprise/play2-cadec/blob/master/conf/routes).
 
-Testkör i en browser med url:en http://localhost:9000/location/[address], t.ex (localhost:9000/location/kungsgatan)[http://localhost:9000/weather/kungsgatan]
+Testkör i en browser med url:en http://localhost:9000/location/{address}, t.ex [localhost:9000/location/kungsgatan](http://localhost:9000/weather/kungsgatan)
 
 Övning 2: Hämta väder för varje plats 
 ---------------------
