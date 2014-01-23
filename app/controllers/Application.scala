@@ -26,7 +26,7 @@ with ConcreteProviders {
 
 
   /**
-   * Övning 1
+   * Övning 2
    * Hämta locations för en adress. Använd getLocations i LocationProvider.
    *
    * OBS! Du måste implementera getLocations själv.
