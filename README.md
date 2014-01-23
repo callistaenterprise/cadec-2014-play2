@@ -29,6 +29,13 @@ TODO: Hur kan man testa detta?
 ---------------------
 I sista övningen ska vi presentera väderinformationen för användaren. Detta genom att implementera metoden [getLocationWithWeather_POST](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala#L50) i Application-controllern.
 
+Övning 5: First Completed
+---------------------
+TODO
+
+Övning 6: Futures med felhantering
+---------------------
+TODO
 
 ---
 *Tutorialen är skapad av Anders Asplund, Pär Wenåker och Albert Örwall för Cadec 2014 som arrangeras av [Callista Enterprise AB](http://callistaenterprise.se/).*
