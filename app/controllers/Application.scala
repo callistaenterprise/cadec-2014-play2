@@ -87,6 +87,9 @@ with ConcreteProviders {
    *
    * Lägg till en route i routes-filen från /location/:address till
    * getLocationsWithWeather_GET ovan. Testkör t.ex. från en browser.
+   *
+   * Länk till wiki:
+   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-3-h%C3%A4mta-v%C3%A4der-f%C3%B6r-varje-plats-
    */
 
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
