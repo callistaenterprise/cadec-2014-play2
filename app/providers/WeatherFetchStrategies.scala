@@ -30,6 +30,9 @@ trait WeatherFetchStrategies {
    * Testa genom att byta ut strategin vi använder i getLocationsWithWeatherFuture
    * i Application.scala. För att testa felhanteringen kan du gå in i
    * application.conf och ändra till en felaktig url för smhi (smhi.url).
+   *
+   * Länk till wiki:
+   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-6-futures-med-felhantering
    */
     ???
   }
