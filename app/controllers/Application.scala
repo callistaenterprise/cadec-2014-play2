@@ -61,6 +61,9 @@ with ConcreteProviders {
            * Hämta alla WeatherWithLocations för aktuell adress och sätt
            * upp en route hit i routes-filen. Det skall vara en POST och
            * ligga på /weather.
+           *
+           * Länk till wiki:
+           * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-4-presentera-h%C3%A4mtad-information-f%C3%B6r-anv%C3%A4ndaren
            */
           ???
         })
