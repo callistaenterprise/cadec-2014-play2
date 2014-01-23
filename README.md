@@ -2,49 +2,33 @@ Cadec Play 2 Tutorial 2014
 ====================
 TODO: Beskrivning
 
-
 Instruktioner för att sätta upp en utvecklingsmiljö finns [här](https://github.com/callistaenterprise/play2-cadec/wiki/Installationsanvisningar).
 
-[Lathund för Scala och Akka]() TODO
+[Lathund för Scala och Play]() TODO?
 
-Uppgift 1: Vy som visar formulär
+Övning 1: Hämta koordinater för en adress
 ---------------------
-I första uppgiften ska vi presentera ett formulär för användaren där denne kan fylla i en adress för vart väder ska visas.
+I första övningen ska vi söka fram koordinater för en adress från Google's kart-API. En adress (t.ex "Storgatan") kan finnas flera gånger, därför får man tillbaks en lista med koordinater i objektet 'Location', dessa ska sedan returneras till användaren på URL:en http://localhost:9000/location/{adress}
 
-Vi behöver därför implementera en ny index Action som returnerar ett formulär.
-   
-  * Använd vyn `simpleform.scala.html`, glöm inte att fixa en route till din Action.
+Övningen är uppdelad i två delar. Först måste metoden 'getLocation' implementeras i [LocationProvider](https://github.com/callistaenterprise/play2-cadec/blob/master/app/providers/LocationProvider.scala). Vidare instruktioner finns i klassen. 
 
-TODO: Tydligare instruktioner
+Sedan ska metoden 'getLocation' anropas från själva GET-metoden som finns definierad i controller-klassen [Application](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala). Man behöver även ange en korrekt route mellan URL:en '/weather/:address' och metoden 'getLocationForAddress_GET' i [routes-konfigurations-filen](https://github.com/callistaenterprise/play2-cadec/blob/master/conf/routes).
 
-Uppgift 2: Hantera ifyllt formulär
+Testkör i en browser med url:en http://localhost:9000/location/{address}, t.ex [localhost:9000/location/kungsgatan](http://localhost:9000/weather/kungsgatan)
+
+Övning 2: Hämta väder för varje plats 
 ---------------------
-För att hantera det användaren skickar in i formuläret behövs en ny metod som hanterar POST-anrop. Implementera en Action som hanterar en POST från simpleform.scala.html
+Nu ska vi hämta väderinformation för varje plats som sökts upp i Övning 1. Detta görs genom att uppdatera metoden [getLocationsWithWeatherFuture](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala#L93) i Application-controllern.
 
-   * Lägg till en route från /location till din Action
+TODO: Beskriv alla moment
 
-TODO: Tydligare instruktioner
+TODO: Hur kan man testa detta?
 
-Uppgift 3: Hantera JSON istället för formulärdata
+
+Övning 3: Presentera hämtad information för användaren
 ---------------------
-I fortsättningen vill vi hantera data som kommer in som JSON. Därför behöver den Action som du skapade i Övning 2 nu hantera json.
+I sista övningen ska vi presentera väderinformationen för användaren. Detta genom att implementera metoden [getLocationWithWeather_POST](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala#L50) i Application-controllern.
 
-TODO: Tydligare instruktioner
-
-Uppgift 4: Hämta koordinater för adress
----------------------
-Nu ska vi med hjälp av Google's Map API ta hem koordinater för den adress som fylls i. Då en adress kan finnas på flera ställen kommer en lista med flera `locations` returneras. 
-
-Hämta locations utifrån en adress. Använd getLocations i LocationProvider.
-       * OBS! Glöm inte att du måste implementera getLocations själv
-
-TODO: Tydligare instruktioner
-
-
-Uppgift 5: Hämta väderinformation
----------------------
-Nu är det äntligen dags att hämta väderinformationen för varje `location`. Använd getLocation som du implementerade i övning 4 för att hämta locations. Använd sedan en WeatherProvider (smhi eller yr)
-     * för att hämta vädret för samtliga locations.
 
 ---
 *Tutorialen är skapad av Anders Asplund, Pär Wenåker och Albert Örwall för Cadec 2014 som arrangeras av [Callista Enterprise AB](http://callistaenterprise.se/).*
