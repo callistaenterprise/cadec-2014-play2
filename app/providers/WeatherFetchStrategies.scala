@@ -23,7 +23,7 @@ trait WeatherFetchStrategies {
   val withRecovery: Location => Future[LocationWithWeather] = { location =>
 
   /**
-   * Övning 5
+   * Övning 6
    * En future har en funktion, recoverWith, som kan köras om den fallerar.
    * Använd denna för att slå mot yr om smhi skulle råka vara nere.
    *
