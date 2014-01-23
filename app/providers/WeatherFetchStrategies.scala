@@ -24,6 +24,9 @@ trait WeatherFetchStrategies {
    *
    * För att testa måste du byta ut den strategin vi använder (smhi) i
    * getLocationsWithWeatherFuture i Application.scala.
+   *
+   * Länk till wiki:
+   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-5-first-completed
    */
 
     ???
