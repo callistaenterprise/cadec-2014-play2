@@ -18,7 +18,7 @@ trait WeatherFetchStrategies {
 
   val firstCompleted: Location => Future[LocationWithWeather] = { location =>
   /**
-   * Övning 4
+   * Övning 5
    * Returnera svaret från den vädertjänst(smhi eller yr) som är först klar. Använd metoden
    * firstCompletedOf som finns i Future-apit.
    *
