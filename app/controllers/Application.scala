@@ -54,7 +54,7 @@ with ConcreteProviders {
       },
         address => {
           /**
-           * Övning 3
+           * Övning 4
            * Hämta alla WeatherWithLocations för aktuell adress och sätt
            * upp en route hit i routes-filen. Det skall vara en POST och
            * ligga på /weather.
