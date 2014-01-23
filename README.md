@@ -6,7 +6,7 @@ Instruktioner för att sätta upp en utvecklingsmiljö finns [här](https://gith
 
 [Lathund för Scala och Play]() TODO?
 
-Övning 1: Hämta koordinater för en adress
+Övning 2: Hämta koordinater för en adress
 ---------------------
 I första övningen ska vi söka fram koordinater för en adress från Google's kart-API. En adress (t.ex "Storgatan") kan finnas flera gånger, därför får man tillbaks en lista med koordinater i objektet 'Location', dessa ska sedan returneras till användaren på URL:en http://localhost:9000/location/{adress}
 
@@ -16,7 +16,7 @@ Sedan ska metoden 'getLocation' anropas från själva GET-metoden som finns defi
 
 Testkör i en browser med url:en http://localhost:9000/location/{address}, t.ex [localhost:9000/location/kungsgatan](http://localhost:9000/weather/kungsgatan)
 
-Övning 2: Hämta väder för varje plats 
+Övning 3: Hämta väder för varje plats 
 ---------------------
 Nu ska vi hämta väderinformation för varje plats som sökts upp i Övning 1. Detta görs genom att uppdatera metoden [getLocationsWithWeatherFuture](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala#L93) i Application-controllern.
 
@@ -25,7 +25,7 @@ TODO: Beskriv alla moment
 TODO: Hur kan man testa detta?
 
 
-Övning 3: Presentera hämtad information för användaren
+Övning 4: Presentera hämtad information för användaren
 ---------------------
 I sista övningen ska vi presentera väderinformationen för användaren. Detta genom att implementera metoden [getLocationWithWeather_POST](https://github.com/callistaenterprise/play2-cadec/blob/master/app/controllers/Application.scala#L50) i Application-controllern.
 
