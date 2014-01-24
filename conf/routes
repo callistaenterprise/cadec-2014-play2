@@ -10,8 +10,8 @@
 # Övning 3
 # Sätt upp en GET route från /weather/:address till getLocationsWithWeather_GET
 
-# Övning 3
-# Sätt upp en POST route från /location till getLocationWithWeather_POST
+# Övning 4
+# Sätt upp en POST route från /weather till getLocationWithWeather_POST
 
 
 

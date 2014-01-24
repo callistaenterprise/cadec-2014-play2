@@ -63,7 +63,7 @@ with ConcreteProviders {
            * ligga på /weather.
            *
            * Länk till wiki:
-           * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-4-presentera-h%C3%A4mtad-information-f%C3%B6r-anv%C3%A4ndaren
+           * https://github.com/callistaenterprise/cadec-2014-play2/wiki/Övningar#wiki-Övning-4-presentera-hämtad-information-för-användaren
            */
           ???
         })
