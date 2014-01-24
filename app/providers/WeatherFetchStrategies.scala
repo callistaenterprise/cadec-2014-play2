@@ -26,7 +26,7 @@ trait WeatherFetchStrategies {
    * getLocationsWithWeatherFuture i Application.scala.
    *
    * Länk till wiki:
-   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-5-first-completed
+   * https://github.com/callistaenterprise/cadec-2014-play2/wiki/Övningar#wiki-Övning-5-first-completed
    */
 
     ???
