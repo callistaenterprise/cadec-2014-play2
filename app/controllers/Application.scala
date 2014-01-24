@@ -31,11 +31,11 @@ with ConcreteProviders {
    *
    * OBS! Du måste implementera getLocations själv.
    *
-   * Lägg till en route i routes-filen från /weather/:address till
+   * Lägg till en route i routes-filen från /location/:address till
    * getLocationForAddress_GET. Testkör t.ex. från en browser.
    *
    * Länk till wiki:
-   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-2-h%C3%A4mta-koordinater-f%C3%B6r-en-adress
+   * https://github.com/callistaenterprise/cadec-2014-play2/wiki/Övningar#wiki-Övning-2-hämta-koordinater-för-en-adress
    */
 //  def getLocationForAddress_GET(address: String) = Action.async {
 //    ???

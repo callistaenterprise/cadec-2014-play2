@@ -10,7 +10,7 @@ import scala.concurrent.Future
 trait LocationProvider {
   def getLocations(address: String): Future[Seq[Location]] = {
     /**
-     * Övning 1
+     * Övning 2
      * Hämta koordinater mha googles map service. Url:en finns som en property med namnet maps.api
      * i application.conf.
      * Använd hjälp-funktionen config som vi har definierat i JsonHelper för att hämta ut properties
