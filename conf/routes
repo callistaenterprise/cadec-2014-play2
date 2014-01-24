@@ -7,8 +7,8 @@
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 GET         /weather/:address             controllers.Application.getLocationsWithWeather_GET(address: String)
 
-# Övning 3
-# Sätt upp en POST route från /location till getLocationWithWeather_POST
+# Övning 4
+# Sätt upp en POST route från /weather till getLocationWithWeather_POST
 
 # Web Socket implementation
 GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)
