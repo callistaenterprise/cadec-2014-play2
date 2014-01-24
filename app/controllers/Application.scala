@@ -68,7 +68,7 @@ with ConcreteProviders {
 
   /**
    * Method that returns a location with weather for an address.
-   * Mapped to the GET verb and the path /locations/:address in routes
+   * Mapped to the GET verb and the path /weather/:address in routes
    *
    * @param address
    * @return
@@ -88,11 +88,11 @@ with ConcreteProviders {
    *
    * Gör klart de två nedanstående privata metoderna.
    *
-   * Lägg till en route i routes-filen från /location/:address till
+   * Lägg till en route i routes-filen från /weather/:address till
    * getLocationsWithWeather_GET ovan. Testkör t.ex. från en browser.
    *
    * Länk till wiki:
-   * https://github.com/callistaenterprise/cadec-2014-play2/blob/master/README.md#%C3%96vning-3-h%C3%A4mta-v%C3%A4der-f%C3%B6r-varje-plats-
+   * https://github.com/callistaenterprise/cadec-2014-play2/wiki/Övningar#wiki-Övning-3-hämta-väder-för-varje-plats-
    */
 
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {

@@ -6,7 +6,7 @@
 
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 
-# Övning 2
+# Övning 3
 # Sätt upp en GET route från /weather/:address till getLocationsWithWeather_GET
 
 # Övning 3
