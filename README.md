@@ -1,7 +1,7 @@
 Cadec Play 2 Tutorial 2014
 ====================
 
-* [Installationsanvisningar](Installationsanvisningar)
+* [Installationsanvisningar](wiki/Installationsanvisningar)
 * [Lathund](Lathund)
 * [Vädertjänster](Vädertjänster)
 * [Övningar](Övningar)
