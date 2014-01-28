@@ -29,10 +29,8 @@ with ConcreteProviders {
    * Simple action that displays the index page.
    * @return
    */
-  def index = Action.async {
-    Future {
-      Ok(html.main())
-    }
+  def index = Action {
+      Ok(views.html.main())
   }
   
   /**
