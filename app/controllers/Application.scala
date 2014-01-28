@@ -25,7 +25,16 @@ with ConcreteProviders {
     )(Address.apply)(Address.unapply)
   )
 
-
+  /**
+   * Simple action that displays the index page.
+   * @return
+   */
+  def index = Action.async {
+    Future {
+      Ok(html.main())
+    }
+  }
+  
   /**
    * Method that returns the location for an address as JSON.
    * Mapped to the GET verb in routes.
