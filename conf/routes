@@ -5,7 +5,7 @@
 
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 GET         /weather/:address              controllers.Application.getLocationsWithWeather_GET(address: String)
-POST        /location                      controllers.Application.getLocationWithWeather_POST
+POST        /weather                       controllers.Application.getLocationWithWeather_POST
 
 
 # Home page
