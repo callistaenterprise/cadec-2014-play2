@@ -12,7 +12,7 @@ GET         /weather/:address             controllers.Application.getLocationsWi
 
 # Web Socket implementation
 GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)
-GET         /weatherws                     controllers.WebSocketApplication.getWeatherWs
+#GET         /weatherws                     controllers.WebSocketApplication.getWeatherWs
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                  controllers.Assets.at(path="/public", file)
