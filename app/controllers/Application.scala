@@ -77,7 +77,7 @@ with ConcreteProviders {
 
 
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] = {
-    Future.sequence(locations.map(location => smhi(location)))
+    Future.sequence(locations.map(location => firstCompleted(location)))
   }
 
   private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
