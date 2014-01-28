@@ -2,7 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
 
 GET         /location/:address             controllers.Application.getLocationForAddress_GET(address: String)
 
@@ -11,6 +10,9 @@ GET         /location/:address             controllers.Application.getLocationFo
 
 # Övning 4
 # Sätt upp en POST route från /weather till getLocationWithWeather_POST
+
+# Home page
+GET         /                              controllers.Application.index
 
 # Web Socket implementation
 GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)
