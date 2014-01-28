@@ -24,6 +24,15 @@ with ConcreteProviders {
     )(Address.apply)(Address.unapply)
   )
 
+  /**
+   * Simple action that displays the index page.
+   * @return
+   */
+  def index = Action.async {
+    Future {
+      Ok(html.main())
+    }
+  }
 
   /**
    * Övning 2
