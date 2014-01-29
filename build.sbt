@@ -1,4 +1,4 @@
-name := "reactive"
+name := "weather"
 
 version := "1.0-SNAPSHOT"
 
