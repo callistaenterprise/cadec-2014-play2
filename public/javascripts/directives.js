@@ -7,7 +7,7 @@ app.directive('map', function () {
       function initialize() {
         var mapOptions = {
           center: new google.maps.LatLng(57.71,11.94),
-          zoom: 2,
+          zoom: 6,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           streetViewControl: false,
           zoomControl: true,
