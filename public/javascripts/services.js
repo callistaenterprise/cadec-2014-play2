@@ -30,7 +30,11 @@ app.factory('WsService', ['$rootScope', '$log', '$http',
                         if (json === null) {
                             return;
                         }
-                        $rootScope.$broadcast('newPosition', json);
+                        if(json.status) {
+                            $rootScope.$broadcast('endOfPositions', json);
+                        } else {
+                            $rootScope.$broadcast('newPosition', json);
+                        }
                     };
 
                     _ws.onclose = function() {

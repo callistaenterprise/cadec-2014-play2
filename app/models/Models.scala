@@ -16,5 +16,4 @@ case class LocationWithWeather(location: Location, temperatures: Map[String, Wea
 
 }
 
-
 case class Weather(time: DateTime, temp: String)
