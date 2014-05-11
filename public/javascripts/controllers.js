@@ -28,6 +28,7 @@ app.controller('MainCtrl', function ($scope, $http, WsService) {
 
                 angular.forEach(response, function(pos){
                     $scope.$broadcast('newPosition', pos);
+                    $scope.$broadcast('endOfPositions')
                 });
             }).error(function(err){
                 console.log('err');
