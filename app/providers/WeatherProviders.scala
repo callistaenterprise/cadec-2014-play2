@@ -3,10 +3,16 @@ package providers
 import play.api.libs.ws.WS
 import models.JsonHelper._
 import scala.concurrent.Future
-import play.api.libs.ws.Response
 import play.api.libs.concurrent.Execution.Implicits._
 
 import models._
+import org.joda.time.DateTime
+import scala.xml.{NodeSeq, XML}
+import org.joda.time.format.ISODateTimeFormat._
+import play.api.libs.ws.Response
+import models.Location
+import models.LocationWithWeather
+import util.FailureUtil._
 
 trait WeatherProvider {
   def getLocationWithWeather(location: Location):Future[LocationWithWeather]
@@ -22,13 +28,18 @@ trait WeatherProviderImpl extends WeatherProvider {
 
   protected def format(baseUrl: String, location: Location): String
 
+  protected def params(location: Location) : Seq[(String,String)]
+
   def getLocationWithWeather(location: Location) : Future[LocationWithWeather]  = {
-    val serviceUrl = WS.url(format(providerUrl, location))
+    val serviceUrl = WS.url(
+      format(providerUrl, location)
+    ).withQueryString(params(location):_*)
+
     val responseF = serviceUrl.get()
     val weatherF = responseF map parser
     val weatherWithLocationF =  weatherF.map(weather => location.withWeather(providerName, weather))
 
-    weatherWithLocationF
+    failF(weatherWithLocationF)
   }
 
 }
@@ -42,10 +53,18 @@ class YrProvider extends WeatherProviderImpl {
 
   protected def format(baseUrl: String, location: Location) = baseUrl.format(location.lat, location.lng)
 
-  val parser : Response => Weather = { response =>
-    (response.json \ "timeseries").as[Seq[Weather]].filter(_.time.isAfterNow)(0)
-  }
+  protected def params(location: Location) = Seq("lat" -> location.lat, "lon" -> location.lng)
 
+  val parser : Response => Weather = { response =>
+    val xml = XML.loadString(response.body)
+    val v: (String, Seq[NodeSeq]) = (xml \\ "product" \ "time")
+      .map(t => (
+          (t \ "@from").text,
+          (t \ "location" \ "temperature").map(_ \ "@value")
+        )
+      ).head
+    Weather(DateTime.parse(v._1, dateTimeNoMillis), v._2.head.text)
+  }
 }
 
 /**
@@ -56,6 +75,8 @@ class SmhiProvider extends WeatherProviderImpl {
   val providerName = "smhi"
 
   protected def format(baseUrl: String, location: Location) = baseUrl.format(location.lat, location.lng)
+
+  protected def params(location: Location) = Seq.empty
 
   val parser: Response => Weather = { response =>
     (response.json \ "timeseries").as[Seq[Weather]].filter(_.time.isAfterNow)(0)

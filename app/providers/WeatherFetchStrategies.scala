@@ -9,7 +9,7 @@ trait WeatherFetchStrategies {
   this: Providers =>
 
   def provider(name: String): Location => Future[LocationWithWeather] = { location =>
-    providers(name).getLocationWithWeather(location) withTiming
+    providers(name).getLocationWithWeather(location).withTiming
   }
 
   val smhi: (Location) => Future[LocationWithWeather] = provider("smhi")
@@ -42,10 +42,11 @@ trait WeatherFetchStrategies {
    * LocationWithWeather.
    */
   val all: Location => Future[LocationWithWeather] = { location =>
+
     Future.sequence(
-      providers.values
-        .map(f => f.getLocationWithWeather(location)))
-        .map(l => l.tail.fold[LocationWithWeather](l.head)(_ merge _)
+        providers.values
+          .map(f => f.getLocationWithWeather(location).withTiming))
+          .map(l => l.reduce(_ merge _)
       )
   }
 

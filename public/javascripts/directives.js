@@ -6,8 +6,8 @@ app.directive('map', function () {
 
       function initialize() {
         var mapOptions = {
-          center: new google.maps.LatLng(57.71,11.94),
-          zoom: 2,
+          center: new google.maps.LatLng(63.18,14.63),
+          zoom: 5,
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           streetViewControl: false,
           zoomControl: true,
@@ -62,6 +62,10 @@ app.directive('map', function () {
         google.maps.event.addListener(marker, 'mouseout', function() {
             infoWindow.close();
         });
+        //map.fitBounds(bounds);
+      })
+
+      scope.$on('endOfPositions', function() {
         map.fitBounds(bounds);
       })
 
