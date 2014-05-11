@@ -11,12 +11,13 @@ GET         /location/:address             controllers.Application.getLocationFo
 # Övning 4
 # Sätt upp en POST route från /weather till getLocationWithWeather_POST
 
+
 # Home page
-GET         /                              controllers.Application.index
+GET        /                              controllers.Application.index
 
 # Web Socket implementation
-GET         /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)
+GET        /weatherstream/:address        controllers.WebSocketApplication.getWeatherStream(address: String)
 #GET         /weatherws                     controllers.WebSocketApplication.getWeatherWs
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                  controllers.Assets.at(path="/public", file)
+GET        /assets/*file                  controllers.Assets.at(path="/public", file)
