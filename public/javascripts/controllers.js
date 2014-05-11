@@ -8,8 +8,8 @@ app.controller('MainCtrl', function ($scope, $http, WsService) {
 
 	$scope.getWeather = function(address){
 
-        $scope.loading = true;
         var data = { 'address' : address };
+        $scope.loading = true;
 
         if(WsService.isConnected()){
             console.log('use web socket');
@@ -28,6 +28,7 @@ app.controller('MainCtrl', function ($scope, $http, WsService) {
 
                 angular.forEach(response, function(pos){
                     $scope.$broadcast('newPosition', pos);
+                    $scope.$broadcast('endOfPositions')
                 });
             }).error(function(err){
                 console.log('err');
@@ -36,7 +37,9 @@ app.controller('MainCtrl', function ($scope, $http, WsService) {
         }
 	}
 
-    $scope.$on('newPosition', function(e, p) {
-        $scope.loading = false;
+    $scope.$on('endOfPositions', function(e, p) {
+        $scope.$apply(function(){
+            $scope.loading = false;
+        })
     });
 });
