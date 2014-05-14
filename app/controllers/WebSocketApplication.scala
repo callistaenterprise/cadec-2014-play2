@@ -13,17 +13,24 @@ import models.LocationWithWeather
 import models.JsonHelper._
 
 object WebSocketApplication extends Controller
-  with LocationProvider
-  with WeatherFetchStrategies
-  with ConcreteProviders {
+with LocationProvider
+with WeatherFetchStrategies
+with ConcreteProviders {
 
   private def getLocationsWithWeatherFutures(locations: Seq[Location]): Seq[Future[LocationWithWeather]] =
     locations.map(location => all(location))
 
   private val locationToLocationWithWeather: Enumeratee[Seq[Location], Option[LocationWithWeather]] = Enumeratee.mapFlatten {
     locations => Enumerator.interleave(
-      getLocationsWithWeatherFutures(locations).map { locationWithWeatherF =>
-        Enumerator.flatten(locationWithWeatherF.map(v => Enumerator(Option(v))))
+      getLocationsWithWeatherFutures(locations).map {
+        locationWithWeatherF =>
+          Enumerator.flatten(
+            locationWithWeatherF
+              .map(v => Enumerator(Option(v)))
+              .recoverWith {
+              case _ => Future(Enumerator.empty[Option[LocationWithWeather]])
+            }
+          )
       }
     ) andThen Enumerator(None)
   }
@@ -41,14 +48,15 @@ object WebSocketApplication extends Controller
    * @param address the address to search for
    * @return Chuncked stream
    */
-  def getWeatherStream(address: String) = Action.async { request =>
+  def getWeatherStream(address: String) = Action.async {
+    request =>
 
-    val locationsEnumerator = Enumerator.flatten(getLocations(address).map(v => Enumerator(v)))
+      val locationsEnumerator: Enumerator[Seq[Location]] = Enumerator.flatten(getLocations(address).map(v => Enumerator(v)))
 
-    Future(
-      Ok.chunked(
-        locationsEnumerator through locationToLocationWithWeather through locationWithWeatherToJson through EventSource()
-      ).as(EVENT_STREAM))
+      Future(
+        Ok.chunked(
+          locationsEnumerator through locationToLocationWithWeather through locationWithWeatherToJson through EventSource()
+        ).as(EVENT_STREAM))
   }
 
   /**
@@ -59,19 +67,20 @@ object WebSocketApplication extends Controller
    *
    * @return
    */
-  def getWeatherWs = WebSocket.using[JsValue] { request =>
+  def getWeatherWs = WebSocket.using[JsValue] {
+    request =>
 
-    val (iteratee, enumerator) = Concurrent.joined[JsValue]
+      val (iteratee, enumerator) = Concurrent.joined[JsValue]
 
-    val addressJsToAddress: Enumeratee[JsValue, String] = Enumeratee.map {
-      addressJs => (addressJs \ "address").toString()
-    }
+      val addressJsToAddress: Enumeratee[JsValue, String] = Enumeratee.map {
+        addressJs => (addressJs \ "address").toString()
+      }
 
-    val locations: Enumeratee[String, Seq[Location]] = Enumeratee.mapFlatten {
-      address => Enumerator.flatten(getLocations(address).map(v => Enumerator(v)))
-    }
+      val locations: Enumeratee[String, Seq[Location]] = Enumeratee.mapFlatten {
+        address => Enumerator.flatten(getLocations(address).map(v => Enumerator(v)))
+      }
 
-    (iteratee, enumerator &> addressJsToAddress &> locations &> locationToLocationWithWeather &> locationWithWeatherToJson)
+      (iteratee, enumerator &> addressJsToAddress &> locations &> locationToLocationWithWeather &> locationWithWeatherToJson)
   }
 
 }

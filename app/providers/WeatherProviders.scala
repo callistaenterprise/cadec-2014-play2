@@ -12,6 +12,7 @@ import org.joda.time.format.ISODateTimeFormat._
 import play.api.libs.ws.Response
 import models.Location
 import models.LocationWithWeather
+import util.FailureUtil._
 
 trait WeatherProvider {
   def getLocationWithWeather(location: Location):Future[LocationWithWeather]
@@ -30,14 +31,15 @@ trait WeatherProviderImpl extends WeatherProvider {
   protected def params(location: Location) : Seq[(String,String)]
 
   def getLocationWithWeather(location: Location) : Future[LocationWithWeather]  = {
-    val serviceUrl = WS.url(format(providerUrl, location))
-      .withQueryString(params(location):_*)
+    val serviceUrl = WS.url(
+      format(providerUrl, location)
+    ).withQueryString(params(location):_*)
 
     val responseF = serviceUrl.get()
     val weatherF = responseF map parser
     val weatherWithLocationF =  weatherF.map(weather => location.withWeather(providerName, weather))
 
-    weatherWithLocationF
+    failF(weatherWithLocationF)
   }
 
 }
