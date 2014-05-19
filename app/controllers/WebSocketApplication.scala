@@ -73,7 +73,7 @@ with ConcreteProviders {
       val (iteratee, enumerator) = Concurrent.joined[JsValue]
 
       val addressJsToAddress: Enumeratee[JsValue, String] = Enumeratee.map {
-        addressJs => (addressJs \ "address").toString()
+        addressJs => (addressJs \ "address").as[String]
       }
 
       val locations: Enumeratee[String, Seq[Location]] = Enumeratee.mapFlatten {
