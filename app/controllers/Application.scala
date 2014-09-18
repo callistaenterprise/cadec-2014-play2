@@ -9,7 +9,6 @@ import play.api.libs.json.Json._
 import play.api.mvc._
 import providers.{LocationProvider, WeatherFetchStrategies, ConcreteProviders}
 import scala.concurrent.Future
-import views._
 
 
 object Application extends Controller
@@ -80,10 +79,10 @@ with ConcreteProviders {
 
 
   private def getLocationsWithWeatherFuture(locations: Seq[Location]): Future[Seq[LocationWithWeather]] =
-    Future.sequence(locations.map(location => all(location)))
+    Future.sequence(locations.map(location => smhi(location)))
 
 
-  private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
+  private def getLocationsWithWeatherAsJson(address: String): Future[Result] = {
     for {
       locations <- getLocations(address)
       locationsWithWeather <- getLocationsWithWeatherFuture(locations)
