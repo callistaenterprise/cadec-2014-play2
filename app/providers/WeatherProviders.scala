@@ -9,7 +9,7 @@ import models._
 import org.joda.time.DateTime
 import scala.xml.{NodeSeq, XML}
 import org.joda.time.format.ISODateTimeFormat._
-import play.api.libs.ws.Response
+import play.api.libs.ws.WSResponse
 import models.Location
 import models.LocationWithWeather
 import util.FailureUtil._
@@ -22,7 +22,7 @@ trait WeatherProviderImpl extends WeatherProvider {
 
   val providerName : String
 
-  val parser : Response => Weather
+  val parser : WSResponse => Weather
 
   lazy val providerUrl = config(s"$providerName.url")
 
@@ -55,7 +55,7 @@ class YrProvider extends WeatherProviderImpl {
 
   protected def params(location: Location) = Seq("lat" -> location.lat, "lon" -> location.lng)
 
-  val parser : Response => Weather = { response =>
+  val parser : WSResponse => Weather = { response =>
     val xml = XML.loadString(response.body)
     val v: (String, Seq[NodeSeq]) = (xml \\ "product" \ "time")
       .map(t => (
@@ -78,7 +78,7 @@ class SmhiProvider extends WeatherProviderImpl {
 
   protected def params(location: Location) = Seq.empty
 
-  val parser: Response => Weather = { response =>
+  val parser: WSResponse => Weather = { response =>
     (response.json \ "timeseries").as[Seq[Weather]].filter(_.time.isAfterNow)(0)
   }
 
