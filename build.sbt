@@ -1,11 +1,13 @@
+import sbt.Keys._
+import sbt._
+
 name := "weather"
 
 version := "1.0-SNAPSHOT"
 
-libraryDependencies ++= Seq(
-  jdbc,
-  anorm,
-  cache
-)     
+scalaVersion := "2.11.1"
 
-play.Project.playScalaSettings
+libraryDependencies += ws
+
+lazy val root = (project in file(".")).enablePlugins(play.PlayScala)
+
