@@ -118,7 +118,7 @@ with ConcreteProviders {
     ??? //Ta bort denna rad
   }
 
-  private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
+  private def getLocationsWithWeatherAsJson(address: String): Future[Result] = {
     /**
 
       Fyll i det som saknas vid pilarna.
