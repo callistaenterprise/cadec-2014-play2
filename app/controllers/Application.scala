@@ -89,7 +89,7 @@ with ConcreteProviders {
     Future.sequence(locations.map(location => smhi(location)))
   }
 
-  private def getLocationsWithWeatherAsJson(address: String): Future[SimpleResult] = {
+  private def getLocationsWithWeatherAsJson(address: String): Future[Result] = {
     for {
       locations <- getLocations(address)
       locationsWithWeather <- getLocationsWithWeatherFuture(locations)
