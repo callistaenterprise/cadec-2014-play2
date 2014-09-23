@@ -5,6 +5,7 @@ import models.Location
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.{WSResponse, WS}
 import scala.concurrent.Future
+import play.api.Play.current
 
 
 trait LocationProvider {
